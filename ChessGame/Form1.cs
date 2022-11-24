@@ -17,7 +17,7 @@ namespace ChessGame {
         public Form1() {
             InitializeComponent();
             populateGrid();
-            selectPiece.SelectedIndex = 0;
+            //selectPiece.SelectedIndex = 0;
             chessPiece = selectPiece.GetItemText(selectPiece.SelectedItem);
         }
 
@@ -40,7 +40,7 @@ namespace ChessGame {
                     btnGrid[x, y].Location = new Point(x * buttonSize, y * buttonSize);
 
                     btnGrid[x, y].Tag = new Point(x, y);
-                    btnGrid[x, y].Text = x + "|" + y;
+                    btnGrid[x, y].Text = x + "," + y;
 
                     // Add click event for the button
                     btnGrid[x, y].Click += Grid_Button_Click;
@@ -49,11 +49,22 @@ namespace ChessGame {
                     panel1.Controls.Add(btnGrid[x, y]);
 
                     SetBoardColor(x,y);
-
                 }
+            }
+
+            // Correct order of pieces on back rows
+            string[] pieces = { "Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"};
+
+            // Initial setup of pieces on the board
+            for (int i = 0; i < 8; i++) {
+                btnGrid[i, 6].Text = "Pawn W";
+                btnGrid[i, 1].Text = "Pawn B";
+                btnGrid[i, 0].Text = pieces[i];
+                btnGrid[i, 7].Text = pieces[i];
             }
         }
 
+        // Chequered board
         public void SetBoardColor(int x, int y) {
             if ((x % 2 == 0 && y % 2 == 0) || (x % 2 != 0 && y % 2 != 0)) {
                 btnGrid[x, y].BackColor = Color.White;
@@ -75,6 +86,12 @@ namespace ChessGame {
 
             Cell currentCell = chessBoard.Grid[_x, _y];
 
+            // Selecting piece using ComboBox will override pice choice (for development)
+            if (selectPiece.GetItemText(selectPiece.SelectedItem) == "") {
+                chessPiece = (sender as Button).Text;
+
+            }
+
             // Determine next legal moves
             chessBoard.ShowLegalMoves(currentCell, chessPiece);
 
@@ -82,7 +99,7 @@ namespace ChessGame {
             for (int x = 0; x < chessBoard.Size; x++) {
                 for (int y = 0; y < chessBoard.Size; y++) {
                     SetBoardColor(x, y);
-                    btnGrid[x, y].Text = "";
+                    //btnGrid[x, y].Text = "";
                     if (chessBoard.Grid[x, y].IsLegalMove == true) {
                         if ((x % 2 == 0 && y % 2 == 0) || (x % 2 != 0 && y % 2 != 0)) {
                             btnGrid[x, y].BackColor = Color.LightGreen;

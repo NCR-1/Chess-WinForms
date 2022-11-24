@@ -1,6 +1,5 @@
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel1\bin\Debug\ChessBoardModel1.dll
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel1\bin\Debug\ChessBoardModel1.pdb
-C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel1\obj\Debug\ChessBoardModel.csproj.AssemblyReference.cache
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel1\obj\Debug\ChessBoardModel.csproj.CoreCompileInputs.cache
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel1\obj\Debug\ChessBoardModel1.dll
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel1\obj\Debug\ChessBoardModel1.pdb

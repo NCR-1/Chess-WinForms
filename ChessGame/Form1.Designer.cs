@@ -59,6 +59,7 @@ namespace ChessGame {
             this.selectPiece.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.selectPiece.FormattingEnabled = true;
             this.selectPiece.Items.AddRange(new object[] {
+            "",
             "King",
             "Queen",
             "Rook",
