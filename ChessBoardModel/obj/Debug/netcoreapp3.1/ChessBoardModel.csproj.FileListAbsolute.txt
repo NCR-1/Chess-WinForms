@@ -1,9 +1,0 @@
-C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\bin\Debug\netcoreapp3.1\ChessBoardModel.deps.json
-C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\bin\Debug\netcoreapp3.1\ChessBoardModel.dll
-C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\bin\Debug\netcoreapp3.1\ChessBoardModel.pdb
-C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\obj\Debug\netcoreapp3.1\ChessBoardModel.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\obj\Debug\netcoreapp3.1\ChessBoardModel.AssemblyInfoInputs.cache
-C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\obj\Debug\netcoreapp3.1\ChessBoardModel.AssemblyInfo.cs
-C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\obj\Debug\netcoreapp3.1\ChessBoardModel.csproj.CoreCompileInputs.cache
-C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\obj\Debug\netcoreapp3.1\ChessBoardModel.dll
-C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\obj\Debug\netcoreapp3.1\ChessBoardModel.pdb

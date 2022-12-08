@@ -43,6 +43,7 @@ namespace ChessGame {
             this.lbl_3 = new System.Windows.Forms.Label();
             this.lbl_2 = new System.Windows.Forms.Label();
             this.lbl_1 = new System.Windows.Forms.Label();
+            this.btn_play = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lbl_title
@@ -241,11 +242,22 @@ namespace ChessGame {
             this.lbl_1.Text = "1";
             this.lbl_1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // btn_play
+            // 
+            this.btn_play.Location = new System.Drawing.Point(219, 8);
+            this.btn_play.Name = "btn_play";
+            this.btn_play.Size = new System.Drawing.Size(75, 23);
+            this.btn_play.TabIndex = 18;
+            this.btn_play.Text = "Move";
+            this.btn_play.UseVisualStyleBackColor = true;
+            this.btn_play.Click += new System.EventHandler(this.btn_play_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(534, 571);
+            this.Controls.Add(this.btn_play);
             this.Controls.Add(this.lbl_1);
             this.Controls.Add(this.lbl_2);
             this.Controls.Add(this.lbl_3);
@@ -293,6 +305,7 @@ namespace ChessGame {
         private System.Windows.Forms.Label lbl_3;
         private System.Windows.Forms.Label lbl_2;
         private System.Windows.Forms.Label lbl_1;
+        private System.Windows.Forms.Button btn_play;
     }
 }
 

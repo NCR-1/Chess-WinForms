@@ -88,7 +88,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ChessBoardModel1\ChessBoardModel.csproj">
+    <ProjectReference Include="..\ChessBoardModel\ChessBoardModel.csproj">
       <Project>{b57cb24f-9dfb-4fa8-9b1d-d29e26b15a9f}</Project>
       <Name>ChessBoardModel</Name>
     </ProjectReference>
