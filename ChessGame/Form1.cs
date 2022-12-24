@@ -16,8 +16,6 @@ namespace ChessGame {
         public Form1() {
             InitializeComponent();
             populateGrid();
-            //selectPiece.SelectedIndex = 0;
-            chessPiece = selectPiece.GetItemText(selectPiece.SelectedItem);
         }
 
         private void populateGrid() {
@@ -43,7 +41,11 @@ namespace ChessGame {
                     // Set the location of the button
                     btnGrid[x, y].Location = new Point(x * buttonSize, y * buttonSize);
 
-                    btnGrid[x, y].Tag = new Point(x, y);
+                    //btnGrid[x, y].Tag = new Point(x, y);
+                    btnGrid[x, y].Tag = new ButtonTag() {
+                        Team = "",
+                        Position = new Point(x, y)
+                    };
                     //btnGrid[x, y].Text = x + "," + y;
 
                     // Add click event for the button
@@ -63,9 +65,15 @@ namespace ChessGame {
             // Initial setup of pieces on the board
             for (int i = 0; i < 8; i++) {
                 btnGrid[i, 6].Text = "Pawn W";
+                ((dynamic)btnGrid[i, 6].Tag).Team = "White";
                 btnGrid[i, 1].Text = "Pawn B";
-                btnGrid[i, 0].Text = pieces[i];
+                ((dynamic)btnGrid[i, 1].Tag).Team = "Black";
                 btnGrid[i, 7].Text = pieces[i];
+                ((dynamic)btnGrid[i, 7].Tag).Team = "White";
+                btnGrid[i, 0].Text = pieces[i];
+                ((dynamic)btnGrid[i, 0].Tag).Team = "Black";
+
+
             }
         }
 
@@ -86,6 +94,7 @@ namespace ChessGame {
         }
 
         string lastPiece;
+        string lastPieceTeam;
         int moveCounter = 0;
 
         //Show legal moves of a piece when clicked
@@ -105,6 +114,8 @@ namespace ChessGame {
                     }
                     if (chessBoard.Grid[x, y].IsLegalMove == true) {
                         lastPiece = clickedButton.Text;
+                        lastPieceTeam = ((dynamic)clickedButton.Tag).Team;
+
                         if ((x % 2 == 0 && y % 2 == 0) || (x % 2 != 0 && y % 2 != 0)) {
                             btnGrid[x, y].BackColor = Color.LightGreen;
                         }
@@ -132,15 +143,18 @@ namespace ChessGame {
 
                 // Get the row and column number of button clicked - sender is the obj that is clicked
                 Button clickedButton = (Button)sender;
-                Point location = (Point)clickedButton.Tag;
+                Point location = ((dynamic)clickedButton.Tag).Position;
 
                 int _x = location.X;
                 int _y = location.Y;
 
+                string pieceTeam = ((dynamic)clickedButton.Tag).Team;
+
                 bool isLegalMove = chessBoard.Grid[_x, _y].IsLegalMove;
 
-                if (isLegalMove == true && lastX < 8 && lastY < 8) {
+                if (isLegalMove == true && lastX < 8 && lastY < 8 && pieceTeam != lastPieceTeam) {
                     btnGrid[lastX, lastY].Text = "";
+                    ((dynamic)btnGrid[lastX, lastY].Tag).Team = "";
                 }
 
                 lastX = _x;
@@ -150,18 +164,19 @@ namespace ChessGame {
 
                 moveCounter++;
 
-                // Selecting piece using ComboBox will override pice choice (for development)
-                if (selectPiece.GetItemText(selectPiece.SelectedItem) == "") {
-                    chessPiece = (sender as Button).Text;
-                }
+                chessPiece = (sender as Button).Text;
 
                 // Determine next legal moves
                 chessBoard.CheckLegalMoves(currentCell, chessPiece);
-                ShowLegalMoves(clickedButton);
+                ShowLegalMoves(clickedButton); 
 
                 // Move piece on click of second button (2nd button is where piece should be moved to)
-                if (isLegalMove == true && moveCounter == 2) {
+                if (isLegalMove == true && moveCounter == 2 && pieceTeam != lastPieceTeam) {
                     clickedButton.Text = lastPiece;
+                    Console.WriteLine("clicked button team: "+ pieceTeam);
+                    Console.WriteLine("last piece team: " + lastPieceTeam);
+
+                    ((dynamic)clickedButton.Tag).Team = lastPieceTeam;
                 }
 
                 if (moveCounter == 2) {
@@ -184,13 +199,11 @@ namespace ChessGame {
                 Console.WriteLine("isMoving: " + isMoving);
                 Console.WriteLine("moveCounter: " + moveCounter);
                 Console.WriteLine("lastPiece: " + lastPiece);
+                Console.WriteLine("location: " + location);
+                Console.WriteLine("Team: " + ((dynamic)clickedButton.Tag).Team);
                 Console.WriteLine("---------------");
 
             }
-        }
-
-        private void selectPiece_SelectionChangeCommitted(object sender, EventArgs e) {
-            chessPiece = selectPiece.GetItemText(selectPiece.SelectedItem);
         }
 
         // Changes color of play button depending on whether player is making a move

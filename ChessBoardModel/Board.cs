@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace ChessBoardModel {
@@ -232,9 +233,10 @@ namespace ChessBoardModel {
                     break;
             }
         }
+    }
 
-        public void MovePiece(Cell currentCell, string chessPiece) {
-
-        }
+    public class ButtonTag {
+        public string Team { get; set; }
+        public Point Position { get; set; }
     }
 }

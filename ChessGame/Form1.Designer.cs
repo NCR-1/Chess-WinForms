@@ -25,7 +25,6 @@ namespace ChessGame {
         /// </summary>
         private void InitializeComponent() {
             this.lbl_title = new System.Windows.Forms.Label();
-            this.selectPiece = new System.Windows.Forms.ComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lbl_a = new System.Windows.Forms.Label();
             this.lbl_b = new System.Windows.Forms.Label();
@@ -54,24 +53,6 @@ namespace ChessGame {
             this.lbl_title.Size = new System.Drawing.Size(147, 13);
             this.lbl_title.TabIndex = 0;
             this.lbl_title.Text = "Practice playing chess offline!";
-            // 
-            // selectPiece
-            // 
-            this.selectPiece.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.selectPiece.FormattingEnabled = true;
-            this.selectPiece.Items.AddRange(new object[] {
-            "",
-            "King",
-            "Queen",
-            "Rook",
-            "Bishop",
-            "Knight",
-            "Pawn"});
-            this.selectPiece.Location = new System.Drawing.Point(391, 10);
-            this.selectPiece.Name = "selectPiece";
-            this.selectPiece.Size = new System.Drawing.Size(121, 21);
-            this.selectPiece.TabIndex = 1;
-            this.selectPiece.SelectionChangeCommitted += new System.EventHandler(this.selectPiece_SelectionChangeCommitted);
             // 
             // panel1
             // 
@@ -275,7 +256,6 @@ namespace ChessGame {
             this.Controls.Add(this.lbl_b);
             this.Controls.Add(this.lbl_a);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.selectPiece);
             this.Controls.Add(this.lbl_title);
             this.Name = "Form1";
             this.Text = "Chess!";
@@ -287,7 +267,6 @@ namespace ChessGame {
         #endregion
 
         private System.Windows.Forms.Label lbl_title;
-        private System.Windows.Forms.ComboBox selectPiece;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label lbl_a;
         private System.Windows.Forms.Label lbl_b;
@@ -308,4 +287,3 @@ namespace ChessGame {
         private System.Windows.Forms.Button btn_play;
     }
 }
-
