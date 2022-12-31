@@ -32,203 +32,233 @@ namespace ChessBoardModel {
 
             int boardSize = 8;
 
-            // Clear moves
+            bool isBlocked = false;
+
+            //Clear moves
             for (int x = 0; x < Size; x++) {
                 for (int y = 0; y < Size; y++) {
                     Grid[x, y].IsLegalMove = false;
-                    Grid[x, y].IsCurrentlyOccupied = false;
                 }
             }
 
             // Checks if index is in bounds to avoid IndexOutOfBounds error setting cell as valid move
-            void isValidCell(int row, int column) {
-                if (currentCell.RowNumber + row < boardSize 
-                    && currentCell.ColumnNumber + column < boardSize 
-                    && currentCell.RowNumber + row >= 0 
-                    && currentCell.ColumnNumber + column >= 0) {
-                    Grid[currentCell.RowNumber + row , currentCell.ColumnNumber + column].IsLegalMove = true;
-
-                    if (Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].IsCurrentlyOccupied == true) {
-                        Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].IsLegalMove = false;
+            void isValidCellSpecial(int row, int column) {
+                if (isBlocked == false) {
+                    if (currentCell.RowNumber + row < boardSize
+                        && currentCell.ColumnNumber + column < boardSize
+                        && currentCell.RowNumber + row >= 0
+                        && currentCell.ColumnNumber + column >= 0) {
+                        Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].IsLegalMove = true;
                     }
                 }
             }
 
-            // Find all legal moves for piece
+            void isValidCell(int row, int column, int range) {
+                if (row == +1 && column == 0) {
+                    for (int i = 1; i <= range; i++) {
+                        if (currentCell.RowNumber + i < boardSize
+                        && currentCell.ColumnNumber + 0 < boardSize
+                        && currentCell.RowNumber + i >= 0
+                        && currentCell.ColumnNumber + 0 >= 0) {
+                            Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + 0].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + 0].IsCurrentlyOccupied == true) {
+                                goto LoopEnd;
+                            }
+                        }
+                    }
+                LoopEnd:;
+                }
+                if (row == -1 && column == 0) {
+                    for (int i = 1; i <= range; i++) {
+                        if (currentCell.RowNumber + -i < boardSize
+                        && currentCell.ColumnNumber + 0 < boardSize
+                        && currentCell.RowNumber + -i >= 0
+                        && currentCell.ColumnNumber + 0 >= 0) {
+                            Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + 0].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + 0].IsCurrentlyOccupied == true) {
+                                goto LoopEnd;
+                            }
+                        }
+                    }
+                LoopEnd:;
+                }
+                if (row == 0 && column == +1) {
+                    for (int i = 1; i <= range; i++) {
+                        if (currentCell.RowNumber + 0 < boardSize
+                        && currentCell.ColumnNumber + i < boardSize
+                        && currentCell.RowNumber + 0 >= 0
+                        && currentCell.ColumnNumber + i >= 0) {
+                            Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + i].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + i].IsCurrentlyOccupied == true) {
+                                goto LoopEnd;
+                            }
+                        }
+                    }
+                LoopEnd:;
+                }
+                if (row == 0 && column == -1) {
+                    for (int i = 1; i <= range; i++) {
+                        if (currentCell.RowNumber + 0 < boardSize
+                        && currentCell.ColumnNumber + -i < boardSize
+                        && currentCell.RowNumber + 0 >= 0
+                        && currentCell.ColumnNumber + -i >= 0) {
+                            Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + -i].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + -i].IsCurrentlyOccupied == true) {
+                                goto LoopEnd;
+                            }
+                        }
+                    }
+                LoopEnd:;
+                }
+                if (row == +1 && column == +1) {
+                    for (int i = 1; i <= range; i++) {
+                        if (currentCell.RowNumber + i < boardSize
+                        && currentCell.ColumnNumber + i < boardSize
+                        && currentCell.RowNumber + i >= 0
+                        && currentCell.ColumnNumber + i >= 0) {
+                            Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + i].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + i].IsCurrentlyOccupied == true) {
+                                goto LoopEnd;
+                            }
+                        }
+                    }
+                LoopEnd:;
+                }
+                if (row == -1 && column == -1) {
+                    for (int i = 1; i <= range; i++) {
+                        if (currentCell.RowNumber + -i < boardSize
+                        && currentCell.ColumnNumber + -i < boardSize
+                        && currentCell.RowNumber + -i >= 0
+                        && currentCell.ColumnNumber + -i >= 0) {
+                            Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + -i].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + -i].IsCurrentlyOccupied == true) {
+                                goto LoopEnd;
+                            }
+                        }
+                    }
+                LoopEnd:;
+                }
+                if (row == +1 && column == -1) {
+                    for (int i = 1; i <= range; i++) {
+                        if (currentCell.RowNumber + i < boardSize
+                        && currentCell.ColumnNumber + -i < boardSize
+                        && currentCell.RowNumber + i >= 0
+                        && currentCell.ColumnNumber + -i >= 0) {
+                            Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + -i].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + -i].IsCurrentlyOccupied == true) {
+                                goto LoopEnd;
+                            }
+                        }
+                    }
+                LoopEnd:;
+                }
+                if (row == -1 && column == +1) {
+                    bool isBlocked1 = false;
+                    for (int i = 1; i <= range; i++) {
+                        if (currentCell.RowNumber + -i < boardSize
+                        && currentCell.ColumnNumber + i < boardSize
+                        && currentCell.RowNumber + -i >= 0
+                        && currentCell.ColumnNumber + i >= 0
+                        && isBlocked1 ==  false) {
+                            Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + i].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + i].IsCurrentlyOccupied == true) {
+                                goto LoopEnd;
+                            }
+                        }
+                    }
+                LoopEnd:;
+                }
+            }
+
+            // Define all legal moves for piece
             switch (chessPiece) {
                 case "King":
                     try { Grid[currentCell.RowNumber, currentCell.ColumnNumber].IsCurrentlyOccupied = true; } catch { }
 
-                    isValidCell(+1, 0);
-                    isValidCell(-1, 0);
-                    isValidCell(0, +1);
-                    isValidCell(0, -1);
-                    isValidCell(+1, +1);
-                    isValidCell(-1, -1);
-                    isValidCell(+1, -1);
-                    isValidCell(-1, +1);
+                    isValidCell(0, -1, 1); // Up
+                    isValidCell(0, +1, 1); // Down
+                    isValidCell(-1, 0, 1); // Left
+                    isValidCell(+1, 0, 1); // Right
+                    isValidCell(-1, -1, 1); //Up-Left
+                    isValidCell(+1, -1, 1); // Up-Right
+                    isValidCell(-1, +1, 1); // Down-Left
+                    isValidCell(+1, +1, 1); // Down-Right
+
                     break;
 
                 case "Queen":
                     try { Grid[currentCell.RowNumber, currentCell.ColumnNumber].IsCurrentlyOccupied = true; } catch { }
 
-                    isValidCell(+1, 0);
-                    isValidCell(+2, 0);
-                    isValidCell(+3, 0);
-                    isValidCell(+4, 0);
-                    isValidCell(+5, 0);
-                    isValidCell(+6, 0);
-                    isValidCell(+7, 0);
-                    isValidCell(-1, 0);
-                    isValidCell(-2, 0);
-                    isValidCell(-3, 0);
-                    isValidCell(-4, 0);
-                    isValidCell(-5, 0);
-                    isValidCell(-6, 0);
-                    isValidCell(-7, 0);
-                    isValidCell(0, -1);
-                    isValidCell(0, -2);
-                    isValidCell(0, -3);
-                    isValidCell(0, -4);
-                    isValidCell(0, -5);
-                    isValidCell(0, -6);
-                    isValidCell(0, -7);
-                    isValidCell(0, +1);
-                    isValidCell(0, +2);
-                    isValidCell(0, +3);
-                    isValidCell(0, +4);
-                    isValidCell(0, +5);
-                    isValidCell(0, +6);
-                    isValidCell(0, +7);
+                    isValidCell(0, -1, 7); // Up
+                    isValidCell(0, +1, 7); // Down
+                    isValidCell(-1, 0, 7); // Left
+                    isValidCell(+1, 0, 7); // Right
+                    isValidCell(-1, -1, 7); //Up-Left
+                    isValidCell(+1, -1, 7); // Up-Right
+                    isValidCell(-1, +1, 7); // Down-Left
+                    isValidCell(+1, +1, 7); // Down-Right
 
-                    isValidCell(+1, +1);
-                    isValidCell(+2, +2);
-                    isValidCell(+3, +3);
-                    isValidCell(+4, +4);
-                    isValidCell(+5, +5);
-                    isValidCell(+6, +6);
-                    isValidCell(+7, +7);
-                    isValidCell(-1, -1);
-                    isValidCell(-2, -2);
-                    isValidCell(-3, -3);
-                    isValidCell(-4, -4);
-                    isValidCell(-5, -5);
-                    isValidCell(-6, -6);
-                    isValidCell(-7, -7);
-                    isValidCell(-1, +1);
-                    isValidCell(-2, +2);
-                    isValidCell(-3, +3);
-                    isValidCell(-4, +4);
-                    isValidCell(-5, +5);
-                    isValidCell(-6, +6);
-                    isValidCell(-7, +7);
-                    isValidCell(+1, -1);
-                    isValidCell(+2, -2);
-                    isValidCell(+3, -3);
-                    isValidCell(+4, -4);
-                    isValidCell(+5, -5);
-                    isValidCell(+6, -6);
-                    isValidCell(+7, -7);
                     break;
 
                 case "Rook":
                     try { Grid[currentCell.RowNumber, currentCell.ColumnNumber].IsCurrentlyOccupied = true; } catch { }
 
-                    isValidCell(+1, 0);
-                    isValidCell(+2, 0);
-                    isValidCell(+3, 0);
-                    isValidCell(+4, 0);
-                    isValidCell(+5, 0);
-                    isValidCell(+6, 0);
-                    isValidCell(+7, 0);
-                    isValidCell(-1, 0);
-                    isValidCell(-2, 0);
-                    isValidCell(-3, 0);
-                    isValidCell(-4, 0);
-                    isValidCell(-5, 0);
-                    isValidCell(-6, 0);
-                    isValidCell(-7, 0);
-                    isValidCell(0, -1);
-                    isValidCell(0, -2);
-                    isValidCell(0, -3);
-                    isValidCell(0, -4);
-                    isValidCell(0, -5);
-                    isValidCell(0, -6);
-                    isValidCell(0, -7);
-                    isValidCell(0, +1);
-                    isValidCell(0, +2);
-                    isValidCell(0, +3);
-                    isValidCell(0, +4);
-                    isValidCell(0, +5);
-                    isValidCell(0, +6);
-                    isValidCell(0, +7);
+                    isValidCell(0, -1, 7); // Up
+                    isValidCell(0, +1, 7); // Down
+                    isValidCell(-1, 0, 7); // Left
+                    isValidCell(+1, 0, 7); // Right
+
                     break;
 
                 case "Bishop":
                     try { Grid[currentCell.RowNumber, currentCell.ColumnNumber].IsCurrentlyOccupied = true; } catch { }
 
-                    isValidCell(+1, +1);
-                    isValidCell(+2, +2);
-                    isValidCell(+3, +3);
-                    isValidCell(+4, +4);
-                    isValidCell(+5, +5);
-                    isValidCell(+6, +6);
-                    isValidCell(+7, +7);
-                    isValidCell(-1, -1);
-                    isValidCell(-2, -2);
-                    isValidCell(-3, -3);
-                    isValidCell(-4, -4);
-                    isValidCell(-5, -5);
-                    isValidCell(-6, -6);
-                    isValidCell(-7, -7);
-                    isValidCell(-1, +1);
-                    isValidCell(-2, +2);
-                    isValidCell(-3, +3);
-                    isValidCell(-4, +4);
-                    isValidCell(-5, +5);
-                    isValidCell(-6, +6);
-                    isValidCell(-7, +7);
-                    isValidCell(+1, -1);
-                    isValidCell(+2, -2);
-                    isValidCell(+3, -3);
-                    isValidCell(+4, -4);
-                    isValidCell(+5, -5);
-                    isValidCell(+6, -6);
-                    isValidCell(+7, -7);
+                    isValidCell(-1, -1, 7); //Up-Left
+                    isValidCell(+1, -1, 7); // Up-Right
+                    isValidCell(-1, +1, 7); // Down-Left
+                    isValidCell(+1, +1, 7); // Down-Right
                     break;
 
                 case "Knight":
                     try { Grid[currentCell.RowNumber, currentCell.ColumnNumber].IsCurrentlyOccupied = true; } catch { }
 
-                    isValidCell(+2, +1);
-                    isValidCell(-2, -1);
-                    isValidCell(+2, -1);
-                    isValidCell(-2, +1);
-                    isValidCell(+1, +2);
-                    isValidCell(-1, -2);
-                    isValidCell(+1, -2);
-                    isValidCell(-1, +2);
+                    isValidCellSpecial(+2, +1);
+                    isValidCellSpecial(-2, -1);
+                    isValidCellSpecial(+2, -1);
+                    isValidCellSpecial(-2, +1);
+                    isValidCellSpecial(+1, +2);
+                    isValidCellSpecial(-1, -2);
+                    isValidCellSpecial(+1, -2);
+                    isValidCellSpecial(-1, +2);
                     break;
 
                 case "Pawn W":
                     try { Grid[currentCell.RowNumber, currentCell.ColumnNumber].IsCurrentlyOccupied = true; } catch { }
 
-                    isValidCell(0, -1);
+                    isValidCellSpecial(0, -1);
 
                     if (currentCell.ColumnNumber == 6) {
-                        isValidCell(0, -1);
-                        isValidCell(0, -2);
+                        isValidCellSpecial(0, -1);
+                        isValidCellSpecial(0, -2);
                     }
                     break;
 
                 case "Pawn B":
                     try { Grid[currentCell.RowNumber, currentCell.ColumnNumber].IsCurrentlyOccupied = true; } catch { }
 
-                    isValidCell(0, +1);
+                    isValidCellSpecial(0, +1);
 
                     if (currentCell.ColumnNumber == 1) {
-                        isValidCell(0, +1);
-                        isValidCell(0, +2);
+                        isValidCellSpecial(0, +1);
+                        isValidCellSpecial(0, +2);
                     }
                     break;
             }
