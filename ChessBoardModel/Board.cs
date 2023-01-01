@@ -41,29 +41,55 @@ namespace ChessBoardModel {
                 }
             }
 
-            void isValidCellPawn(int row, int column) {
-                if (currentCell.RowNumber + row < boardSize
-                    && currentCell.ColumnNumber + column < boardSize
-                    && currentCell.RowNumber + row >= 0
-                    && currentCell.ColumnNumber + column >= 0) {
-                    Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].IsLegalMove = true;
+            void isValidCellPawn(int row, int column, int range) {
+                // Down
+                if (row == 0 && column == +1) {
+                    for (int i = 1; i <= range; i++) {
+                        if (currentCell.RowNumber + 0 < boardSize
+                        && currentCell.ColumnNumber + i < boardSize
+                        && currentCell.RowNumber + 0 >= 0
+                        && currentCell.ColumnNumber + i >= 0) {
+                            Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + i].IsLegalMove = true;
 
-                    if (Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].IsCurrentlyOccupied == true) {
-                        Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].IsLegalMove = false;
-                    }
-
-                    // Prevents pieces on edge of board throwing IndexOutOfRange errors
-                    if (currentCell.RowNumber + 1 >= 0
-                        && currentCell.RowNumber + 1 < boardSize) {
-                        if(Grid[currentCell.RowNumber + row + 1, currentCell.ColumnNumber + column].IsCurrentlyOccupied == true) {
-                            Grid[currentCell.RowNumber + row + 1, currentCell.ColumnNumber + column].IsLegalMove = true;
+                            if (Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + i].IsCurrentlyOccupied == true) {
+                                Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + i].IsLegalMove = false;
+                                goto LoopEnd;
+                            }
                         }
                     }
-                    if(currentCell.RowNumber + -1 >= 0 
-                        && currentCell.RowNumber + -1 < boardSize) {
-                        if (Grid[currentCell.RowNumber + row + -1, currentCell.ColumnNumber + column].IsCurrentlyOccupied == true) {
-                            Grid[currentCell.RowNumber + row + -1, currentCell.ColumnNumber + column].IsLegalMove = true;
+                LoopEnd:;
+                }
+                // Up
+                if (row == 0 && column == -1) {
+                    for (int i = 1; i <= range; i++) {
+                        if (currentCell.RowNumber + 0 < boardSize
+                        && currentCell.ColumnNumber + -i < boardSize
+                        && currentCell.RowNumber + 0 >= 0
+                        && currentCell.ColumnNumber + -i >= 0) {
+                            Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + -i].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + -i].IsCurrentlyOccupied == true) {
+                                Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + -i].IsLegalMove = false;
+                                goto LoopEnd;
+                            }
                         }
+                    }
+                LoopEnd:;
+                }
+                // Prevents pieces on edge of board throwing IndexOutOfRange errors
+                if (currentCell.RowNumber + 1 >= 0
+                    && currentCell.RowNumber + 1 < boardSize) {
+                    // Diagonal attack
+                    if (Grid[currentCell.RowNumber + row + 1, currentCell.ColumnNumber + column].IsCurrentlyOccupied == true) {
+                        Grid[currentCell.RowNumber + row + 1, currentCell.ColumnNumber + column].IsLegalMove = true;
+                    }
+                }
+                // Prevents pieces on edge of board throwing IndexOutOfRange errors
+                if (currentCell.RowNumber + -1 >= 0
+                    && currentCell.RowNumber + -1 < boardSize) {
+                    // Diagonal attack
+                    if (Grid[currentCell.RowNumber + row + -1, currentCell.ColumnNumber + column].IsCurrentlyOccupied == true) {
+                        Grid[currentCell.RowNumber + row + -1, currentCell.ColumnNumber + column].IsLegalMove = true;
                     }
                 }
             }
@@ -276,20 +302,18 @@ namespace ChessBoardModel {
                     try { Grid[currentCell.RowNumber, currentCell.ColumnNumber].IsCurrentlyOccupied = true; } catch { }
 
                     if (pieceTeam == "White") {
-                        isValidCellPawn(0, -1);
+                        isValidCellPawn(0, -1, 1);
 
                         if (currentCell.ColumnNumber == 6) {
-                            isValidCellPawn(0, -1);
-                            isValidCellPawn(0, -2);
+                            isValidCellPawn(0, -1, 2 );
                         }
                     }
 
                     if (pieceTeam == "Black") {
-                        isValidCellPawn(0, +1);
+                        isValidCellPawn(0, +1, 1);
 
                         if (currentCell.ColumnNumber == 1) {
-                            isValidCellPawn(0, +1);
-                            isValidCellPawn(0, +2);
+                            isValidCellPawn(0, +1, 2);
                         }
                     }
 

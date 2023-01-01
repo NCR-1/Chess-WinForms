@@ -13,3 +13,13 @@ C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\obj\Debug\ChessG
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\obj\Debug\ChessGame.pdb
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\WhitePawn.png
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\BlackPawn.png
+C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\BlackBishop.png
+C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\BlackKing.png
+C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\BlackKnight.png
+C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\BlackQueen.png
+C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\BlackRook.png
+C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\WhiteBishop.png
+C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\WhiteKing.png
+C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\WhiteKnight.png
+C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\WhiteQueen.png
+C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\WhiteRook.png
