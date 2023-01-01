@@ -9,3 +9,4 @@ C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\obj\Debug\
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\obj\Debug\ChessBoardModel1.dll
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\obj\Debug\ChessBoardModel1.pdb
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\obj\Debug\ChessBoardModel.csproj.AssemblyReference.cache
+C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessBoardModel\bin\Debug\img\WhitePawn.png

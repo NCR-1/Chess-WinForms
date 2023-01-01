@@ -11,3 +11,5 @@ C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\obj\Debug\ChessG
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\obj\Debug\ChessGame.csproj.CopyComplete
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\obj\Debug\ChessGame.exe
 C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\obj\Debug\ChessGame.pdb
+C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\WhitePawn.png
+C:\Users\natha\Documents\.GDocuments\Coding\ChessGame\ChessGame\bin\Debug\img\BlackPawn.png

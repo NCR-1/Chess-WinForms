@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ChessBoardModel;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Windows.Forms;
 
 namespace ChessBoardModel {
     public class Board {
@@ -28,11 +30,9 @@ namespace ChessBoardModel {
             }
         }
 
-        public void CheckLegalMoves(Cell currentCell, string chessPiece) {
+        public void CheckLegalMoves(Cell currentCell, string chessPiece, string pieceTeam) {
 
             int boardSize = 8;
-
-            bool isBlocked = false;
 
             //Clear moves
             for (int x = 0; x < Size; x++) {
@@ -41,19 +41,44 @@ namespace ChessBoardModel {
                 }
             }
 
-            // Checks if index is in bounds to avoid IndexOutOfBounds error setting cell as valid move
-            void isValidCellSpecial(int row, int column) {
-                if (isBlocked == false) {
-                    if (currentCell.RowNumber + row < boardSize
-                        && currentCell.ColumnNumber + column < boardSize
-                        && currentCell.RowNumber + row >= 0
-                        && currentCell.ColumnNumber + column >= 0) {
-                        Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].IsLegalMove = true;
+            void isValidCellPawn(int row, int column) {
+                if (currentCell.RowNumber + row < boardSize
+                    && currentCell.ColumnNumber + column < boardSize
+                    && currentCell.RowNumber + row >= 0
+                    && currentCell.ColumnNumber + column >= 0) {
+                    Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].IsLegalMove = true;
+
+                    if (Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].IsCurrentlyOccupied == true) {
+                        Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].IsLegalMove = false;
+                    }
+
+                    // Prevents pieces on edge of board throwing IndexOutOfRange errors
+                    if (currentCell.RowNumber + 1 >= 0
+                        && currentCell.RowNumber + 1 < boardSize) {
+                        if(Grid[currentCell.RowNumber + row + 1, currentCell.ColumnNumber + column].IsCurrentlyOccupied == true) {
+                            Grid[currentCell.RowNumber + row + 1, currentCell.ColumnNumber + column].IsLegalMove = true;
+                        }
+                    }
+                    if(currentCell.RowNumber + -1 >= 0 
+                        && currentCell.RowNumber + -1 < boardSize) {
+                        if (Grid[currentCell.RowNumber + row + -1, currentCell.ColumnNumber + column].IsCurrentlyOccupied == true) {
+                            Grid[currentCell.RowNumber + row + -1, currentCell.ColumnNumber + column].IsLegalMove = true;
+                        }
                     }
                 }
             }
 
+            void isValidCellKnight(int row, int column) {
+                if (currentCell.RowNumber + row < boardSize
+                    && currentCell.ColumnNumber + column < boardSize
+                    && currentCell.RowNumber + row >= 0
+                    && currentCell.ColumnNumber + column >= 0) {
+                    Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].IsLegalMove = true;
+                }
+            }
+
             void isValidCell(int row, int column, int range) {
+                // Right
                 if (row == +1 && column == 0) {
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + i < boardSize
@@ -69,6 +94,7 @@ namespace ChessBoardModel {
                     }
                 LoopEnd:;
                 }
+                // Left
                 if (row == -1 && column == 0) {
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + -i < boardSize
@@ -84,6 +110,7 @@ namespace ChessBoardModel {
                     }
                 LoopEnd:;
                 }
+                // Down
                 if (row == 0 && column == +1) {
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + 0 < boardSize
@@ -99,6 +126,7 @@ namespace ChessBoardModel {
                     }
                 LoopEnd:;
                 }
+                // Up
                 if (row == 0 && column == -1) {
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + 0 < boardSize
@@ -114,6 +142,7 @@ namespace ChessBoardModel {
                     }
                 LoopEnd:;
                 }
+                // Down-Right
                 if (row == +1 && column == +1) {
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + i < boardSize
@@ -129,6 +158,7 @@ namespace ChessBoardModel {
                     }
                 LoopEnd:;
                 }
+                // Up-Left
                 if (row == -1 && column == -1) {
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + -i < boardSize
@@ -144,6 +174,7 @@ namespace ChessBoardModel {
                     }
                 LoopEnd:;
                 }
+                // Up-Right
                 if (row == +1 && column == -1) {
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + i < boardSize
@@ -159,14 +190,13 @@ namespace ChessBoardModel {
                     }
                 LoopEnd:;
                 }
+                // Down-Left
                 if (row == -1 && column == +1) {
-                    bool isBlocked1 = false;
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + -i < boardSize
                         && currentCell.ColumnNumber + i < boardSize
                         && currentCell.RowNumber + -i >= 0
-                        && currentCell.ColumnNumber + i >= 0
-                        && isBlocked1 ==  false) {
+                        && currentCell.ColumnNumber + i >= 0) {
                             Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + i].IsLegalMove = true;
 
                             if (Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + i].IsCurrentlyOccupied == true) {
@@ -187,7 +217,7 @@ namespace ChessBoardModel {
                     isValidCell(0, +1, 1); // Down
                     isValidCell(-1, 0, 1); // Left
                     isValidCell(+1, 0, 1); // Right
-                    isValidCell(-1, -1, 1); //Up-Left
+                    isValidCell(-1, -1, 1); // Up-Left
                     isValidCell(+1, -1, 1); // Up-Right
                     isValidCell(-1, +1, 1); // Down-Left
                     isValidCell(+1, +1, 1); // Down-Right
@@ -201,7 +231,7 @@ namespace ChessBoardModel {
                     isValidCell(0, +1, 7); // Down
                     isValidCell(-1, 0, 7); // Left
                     isValidCell(+1, 0, 7); // Right
-                    isValidCell(-1, -1, 7); //Up-Left
+                    isValidCell(-1, -1, 7); // Up-Left
                     isValidCell(+1, -1, 7); // Up-Right
                     isValidCell(-1, +1, 7); // Down-Left
                     isValidCell(+1, +1, 7); // Down-Right
@@ -221,52 +251,54 @@ namespace ChessBoardModel {
                 case "Bishop":
                     try { Grid[currentCell.RowNumber, currentCell.ColumnNumber].IsCurrentlyOccupied = true; } catch { }
 
-                    isValidCell(-1, -1, 7); //Up-Left
+                    isValidCell(-1, -1, 7); // Up-Left
                     isValidCell(+1, -1, 7); // Up-Right
                     isValidCell(-1, +1, 7); // Down-Left
                     isValidCell(+1, +1, 7); // Down-Right
+
                     break;
 
                 case "Knight":
                     try { Grid[currentCell.RowNumber, currentCell.ColumnNumber].IsCurrentlyOccupied = true; } catch { }
 
-                    isValidCellSpecial(+2, +1);
-                    isValidCellSpecial(-2, -1);
-                    isValidCellSpecial(+2, -1);
-                    isValidCellSpecial(-2, +1);
-                    isValidCellSpecial(+1, +2);
-                    isValidCellSpecial(-1, -2);
-                    isValidCellSpecial(+1, -2);
-                    isValidCellSpecial(-1, +2);
+                    isValidCellKnight(+2, +1);
+                    isValidCellKnight(-2, -1);
+                    isValidCellKnight(+2, -1);
+                    isValidCellKnight(-2, +1);
+                    isValidCellKnight(+1, +2);
+                    isValidCellKnight(-1, -2);
+                    isValidCellKnight(+1, -2);
+                    isValidCellKnight(-1, +2);
+
                     break;
 
-                case "Pawn W":
+                case "Pawn":
                     try { Grid[currentCell.RowNumber, currentCell.ColumnNumber].IsCurrentlyOccupied = true; } catch { }
 
-                    isValidCellSpecial(0, -1);
+                    if (pieceTeam == "White") {
+                        isValidCellPawn(0, -1);
 
-                    if (currentCell.ColumnNumber == 6) {
-                        isValidCellSpecial(0, -1);
-                        isValidCellSpecial(0, -2);
+                        if (currentCell.ColumnNumber == 6) {
+                            isValidCellPawn(0, -1);
+                            isValidCellPawn(0, -2);
+                        }
                     }
-                    break;
 
-                case "Pawn B":
-                    try { Grid[currentCell.RowNumber, currentCell.ColumnNumber].IsCurrentlyOccupied = true; } catch { }
+                    if (pieceTeam == "Black") {
+                        isValidCellPawn(0, +1);
 
-                    isValidCellSpecial(0, +1);
-
-                    if (currentCell.ColumnNumber == 1) {
-                        isValidCellSpecial(0, +1);
-                        isValidCellSpecial(0, +2);
+                        if (currentCell.ColumnNumber == 1) {
+                            isValidCellPawn(0, +1);
+                            isValidCellPawn(0, +2);
+                        }
                     }
+
                     break;
             }
         }
     }
 
-    public class ButtonTag {
-        public string Team { get; set; }
-        public Point Position { get; set; }
-    }
+
 }
+
+

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 
 namespace ChessGame {
+
     public partial class Form1 : Form {
 
         // Reference to the class Board
@@ -62,16 +63,17 @@ namespace ChessGame {
             // Correct order of pieces on back rows
             string[] pieces = { "Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"};
 
+
             // Initial setup of pieces on the board
             for (int i = 0; i < 8; i++) {
-                btnGrid[i, 6].Text = "Pawn W";
-                ((dynamic)btnGrid[i, 6].Tag).Team = "White";
-                btnGrid[i, 1].Text = "Pawn B";
-                ((dynamic)btnGrid[i, 1].Tag).Team = "Black";
+                btnGrid[i, 6].Text = "Pawn";
+                btnGrid[i,6].PieceTag().Team = "White";
+                btnGrid[i, 1].Text = "Pawn";
+                btnGrid[i, 1].PieceTag().Team = "Black";
                 btnGrid[i, 7].Text = pieces[i];
-                ((dynamic)btnGrid[i, 7].Tag).Team = "White";
+                btnGrid[i, 7].PieceTag().Team = "White";
                 btnGrid[i, 0].Text = pieces[i];
-                ((dynamic)btnGrid[i, 0].Tag).Team = "Black";
+                btnGrid[i, 0].PieceTag().Team = "Black";
             }
         }
 
@@ -111,17 +113,13 @@ namespace ChessGame {
                     }
 
                     // Prevent being able to move to space occupied by own team
-                    if (((dynamic)btnGrid[x, y].Tag).Team == ((dynamic)clickedButton.Tag).Team) {
+                    if (btnGrid[x,y].PieceTag().Team == clickedButton.PieceTag().Team) {
                         chessBoard.Grid[x, y].IsLegalMove = false;
                     }
 
-                    //if (btnGrid[x, y].Text != "") {
-                    //    chessBoard.Grid[x, y].IsCurrentlyOccupied = true;
-                    //}
-
                     if (chessBoard.Grid[x, y].IsLegalMove == true) {
                         lastPiece = clickedButton.Text;
-                        lastPieceTeam = ((dynamic)clickedButton.Tag).Team;
+                        lastPieceTeam = clickedButton.PieceTag().Team;
 
                         if ((x % 2 == 0 && y % 2 == 0) || (x % 2 != 0 && y % 2 != 0)) {
                             btnGrid[x, y].BackColor = Color.LightGreen;
@@ -147,99 +145,102 @@ namespace ChessGame {
 
         private void Grid_Button_Click(object sender, EventArgs e) {
 
-            if (isMoving == true) {
+            if (isMoving != true) { return; }
 
-                // Get the row and column number of button clicked - sender is the obj that is clicked
-                Button clickedButton = (Button)sender;
-                Point location = ((dynamic)clickedButton.Tag).Position;
+            // Get the row and column number of button clicked - sender is the obj that is clicked
+            Button clickedButton = (Button)sender;
 
-                int _x = location.X;
-                int _y = location.Y;
+            if (whiteMoving == true && clickedButton.PieceTag().Team != "White" && moveCounter != 1) { return; }
+            else if ((whiteMoving == false && clickedButton.PieceTag().Team != "Black" && moveCounter != 1)) { return; }
 
-                string pieceTeam = ((dynamic)clickedButton.Tag).Team;
+            Point location = clickedButton.PieceTag().Position;
 
-                bool isLegalMove = chessBoard.Grid[_x, _y].IsLegalMove;
+            int _x = location.X;
+            int _y = location.Y;
 
-                // lastX/Y < 8 checks that value is in range of board - used for allowing one move at a time
-                if (isLegalMove == true && lastX < 8 && lastY < 8) {
-                    btnGrid[lastX, lastY].Text = "";
-                    ((dynamic)btnGrid[lastX, lastY].Tag).Team = "";
-                }
+            string pieceTeam = clickedButton.PieceTag().Team;
 
-                lastX = _x;
-                lastY = _y;
+            bool isLegalMove = chessBoard.Grid[_x, _y].IsLegalMove;
 
-                Cell currentCell = chessBoard.Grid[_x, _y];
+            // lastX/Y < 8 checks that value is in range of board - used for allowing one move at a time
+            if (isLegalMove == true && lastX < 8 && lastY < 8) {
+                btnGrid[lastX, lastY].Text = "";
+                btnGrid[lastX, lastY].PieceTag().Team = "";
+            }
 
-                moveCounter++;
+            lastX = _x;
+            lastY = _y;
 
-                chessPiece = (sender as Button).Text;
+            Cell currentCell = chessBoard.Grid[_x, _y];
 
-                // Check if cell is occupied => used to prevent jumping pieces (CheckLegalMoves)
-                for (int x = 0; x < chessBoard.Size; x++) {
-                    for (int y = 0; y < chessBoard.Size; y++) {
-                        if (btnGrid[x, y].Text != "") {
-                            chessBoard.Grid[x, y].IsCurrentlyOccupied = true;
-                        }
-                        else {
-                            chessBoard.Grid[x, y].IsCurrentlyOccupied = false;
-                        }
+            moveCounter++;
+
+            chessPiece = (sender as Button).Text;
+
+            // Check if cell is occupied => used to prevent jumping pieces (CheckLegalMoves)
+            for (int x = 0; x < chessBoard.Size; x++) {
+                for (int y = 0; y < chessBoard.Size; y++) {
+                    if (btnGrid[x, y].Text != "") {
+                        chessBoard.Grid[x, y].IsCurrentlyOccupied = true;
+                    }
+                    else {
+                        chessBoard.Grid[x, y].IsCurrentlyOccupied = false;
                     }
                 }
+            }
 
-                // Determine next legal moves
-                chessBoard.CheckLegalMoves(currentCell, chessPiece);
-                ShowLegalMoves(clickedButton); 
+            // Determine next legal moves
+            chessBoard.CheckLegalMoves(currentCell, chessPiece, pieceTeam);
+            ShowLegalMoves(clickedButton); 
 
 
-                // Move piece on click of second button (2nd button is where piece should be moved to)
-                if (isLegalMove == true && moveCounter == 2) {
-                    // Add captured pieces to List<String>
-                    switch (((dynamic)btnGrid[lastX, lastY].Tag).Team) {
-                        case "White":
-                            capturedWhite.Add(btnGrid[lastX, lastY].Text);
-                            break;
-                        case "Black":
-                            capturedBlack.Add(btnGrid[lastX, lastY].Text);
-                            break;
-                    }
-                    clickedButton.Text = lastPiece;
-                    Console.WriteLine("clicked button team: "+ pieceTeam);
-                    Console.WriteLine("last piece team: " + lastPieceTeam);
-
-                    ((dynamic)clickedButton.Tag).Team = lastPieceTeam;
+            // Move piece on click of second button (2nd button is where piece should be moved to)
+            if (isLegalMove == true && moveCounter == 2) {
+                // Add captured pieces to List<String>
+                switch (btnGrid[lastX, lastY].PieceTag().Team) {
+                    case "White":
+                        capturedWhite.Add(btnGrid[lastX, lastY].Text);
+                        break;
+                    case "Black":
+                        capturedBlack.Add(btnGrid[lastX, lastY].Text);
+                        break;
                 }
+                clickedButton.Text = lastPiece;
+                Console.WriteLine("clicked button team: "+ pieceTeam);
+                Console.WriteLine("last piece team: " + lastPieceTeam);
 
-                if (moveCounter == 2) {
-                    Console.WriteLine("isLegalMove: " + isLegalMove);
-                    Console.WriteLine("moveCounter: " + moveCounter);
-                    Console.WriteLine("---------------");
-                }
+                clickedButton.PieceTag().Team = lastPieceTeam;
+                isMoving = false;
+            }
 
-                // Only allows one move to be made at a time
-                if (moveCounter > 1) {
-                    moveCounter = 0;
-                    lastPiece = null;
-                    lastX = 30;
-                    lastY = 30;
-                    isMoving = false;
-                    //isLegalMove = false;
-                    MoveButtonColor();
-                }
-
-                Console.WriteLine("isMoving: " + isMoving);
+            if (moveCounter == 2) {
+                Console.WriteLine("isLegalMove: " + isLegalMove);
                 Console.WriteLine("moveCounter: " + moveCounter);
-                Console.WriteLine("lastPiece: " + lastPiece);
-                Console.WriteLine("location: " + location);
-                Console.WriteLine("Team: " + ((dynamic)clickedButton.Tag).Team);
-                Console.Write("Captured White: ");
-                foreach(var i in capturedWhite) { Console.Write(i.ToString() + ", "); };
-                Console.WriteLine();
-                Console.Write("Captured Black: ");
-                foreach (var i in capturedBlack) { Console.Write(i.ToString() + ", "); }
-                Console.WriteLine();
                 Console.WriteLine("---------------");
             }
+
+            // Only allows one move to be made at a time
+            if (moveCounter > 1) {
+                moveCounter = 0;
+                lastPiece = null;
+                lastX = 30;
+                lastY = 30;
+                //isLegalMove = false;
+                MoveButtonColor();
+            }
+
+            Console.WriteLine("isMoving: " + isMoving);
+            Console.WriteLine("moveCounter: " + moveCounter);
+            Console.WriteLine("lastPiece: " + lastPiece);
+            Console.WriteLine("location: " + location);
+            Console.WriteLine("Team: " + clickedButton.PieceTag().Team);
+            Console.Write("Captured White: ");
+            foreach(var i in capturedWhite) { Console.Write(i.ToString() + ", "); };
+            Console.WriteLine();
+            Console.Write("Captured Black: ");
+            foreach (var i in capturedBlack) { Console.Write(i.ToString() + ", "); }
+            Console.WriteLine();
+            Console.WriteLine("---------------");
         }
 
         // Changes color of play button depending on whether player is making a move
@@ -254,10 +255,19 @@ namespace ChessGame {
 
         // Used to determine when a move can be made
         bool isMoving = false;
+        bool whiteMoving = false;
 
         // Toggles ability to make a move
         private void btn_play_Click(object sender, EventArgs e) {
             isMoving ^= true;
+            whiteMoving ^= true;
+            if (whiteMoving == true) {
+                lbl_turn.Text = "White Moving...";
+            }
+            else {
+                lbl_turn.Text = "Black Moving...";
+
+            }
             MoveButtonColor();
             Console.WriteLine("isMoving: " + isMoving);
             Console.WriteLine("---------------");
