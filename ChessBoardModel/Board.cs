@@ -26,9 +26,14 @@ namespace ChessBoardModel {
             for (int x = 0; x < Size; x++) {
                 for (int y = 0; y < Size; y++) {
                     Grid[x, y] = new Cell(x, y);
+                    //Console.Write("|" + y + "," + x);
                 }
+                //Console.WriteLine();
+                //Console.WriteLine("--------------------------------");
             }
         }
+
+        public bool isKingCheck = false;
 
         public void CheckLegalMoves(Cell currentCell, string chessPiece, string pieceTeam) {
 
@@ -37,12 +42,14 @@ namespace ChessBoardModel {
             //Clear moves
             for (int x = 0; x < Size; x++) {
                 for (int y = 0; y < Size; y++) {
-                    Grid[x, y].IsLegalMove = false;
+                    Grid[y, x].IsLegalMove = false;
+                    isKingCheck = false;
+                    //Grid[y, x].IsCurrentlyOccupied = false;
                 }
             }
 
             void isValidCellPawn(int row, int column, int range) {
-                // Down
+                // Down (Black)
                 if (row == 0 && column == +1) {
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + 0 < boardSize
@@ -59,7 +66,7 @@ namespace ChessBoardModel {
                     }
                 LoopEnd:;
                 }
-                // Up
+                // Up (White)
                 if (row == 0 && column == -1) {
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + 0 < boardSize
@@ -76,7 +83,7 @@ namespace ChessBoardModel {
                     }
                 LoopEnd:;
                 }
-                // Prevents pieces on edge of board throwing IndexOutOfRange errors
+                // Prevents pieces on edge of board throwing IndexOutOfRange errors 
                 if (currentCell.RowNumber + 1 >= 0
                     && currentCell.RowNumber + 1 < boardSize) {
                     // Diagonal attack
@@ -176,6 +183,10 @@ namespace ChessBoardModel {
                         && currentCell.RowNumber + i >= 0
                         && currentCell.ColumnNumber + i >= 0) {
                             Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + i].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + i].Piece == "King") {
+                                isKingCheck = true;
+                            }
 
                             if (Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + i].IsCurrentlyOccupied == true) {
                                 goto LoopEnd;
@@ -303,15 +314,15 @@ namespace ChessBoardModel {
 
                     if (pieceTeam == "White") {
                         isValidCellPawn(0, -1, 1);
-
+                        //Initial move
                         if (currentCell.ColumnNumber == 6) {
-                            isValidCellPawn(0, -1, 2 );
+                            isValidCellPawn(0, -1, 2);
                         }
                     }
 
                     if (pieceTeam == "Black") {
                         isValidCellPawn(0, +1, 1);
-
+                        //Initial move
                         if (currentCell.ColumnNumber == 1) {
                             isValidCellPawn(0, +1, 2);
                         }
