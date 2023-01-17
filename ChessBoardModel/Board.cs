@@ -1,11 +1,5 @@
-﻿using ChessBoardModel;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿namespace ChessBoardModel {
 
-namespace ChessBoardModel {
     public class Board {
 
         // Default size is 8x8 (A-H, 1-8)
@@ -15,8 +9,7 @@ namespace ChessBoardModel {
         public Cell[,] Grid { get; set; }
 
         // Board constructor
-        public Board (int size) {
-            
+        public Board(int size) {
             Size = size;
 
             // Create new 2d array
@@ -36,15 +29,14 @@ namespace ChessBoardModel {
         public bool isKingCheck = false;
 
         public void CheckLegalMoves(Cell currentCell, string chessPiece, string pieceTeam) {
-
             int boardSize = 8;
 
             //Clear moves
             for (int x = 0; x < Size; x++) {
                 for (int y = 0; y < Size; y++) {
                     Grid[y, x].IsLegalMove = false;
+                    //Grid[y, x].IsCheckPath = false;
                     isKingCheck = false;
-                    //Grid[y, x].IsCurrentlyOccupied = false;
                 }
             }
 
@@ -83,12 +75,17 @@ namespace ChessBoardModel {
                     }
                 LoopEnd:;
                 }
-                // Prevents pieces on edge of board throwing IndexOutOfRange errors 
+                // Prevents pieces on edge of board throwing IndexOutOfRange errors
                 if (currentCell.RowNumber + 1 >= 0
                     && currentCell.RowNumber + 1 < boardSize) {
                     // Diagonal attack
                     if (Grid[currentCell.RowNumber + row + 1, currentCell.ColumnNumber + column].IsCurrentlyOccupied == true) {
                         Grid[currentCell.RowNumber + row + 1, currentCell.ColumnNumber + column].IsLegalMove = true;
+
+                        if (Grid[currentCell.RowNumber + row + 1, currentCell.ColumnNumber + column].Piece == "King"
+                            && Grid[currentCell.RowNumber + row + 1, currentCell.ColumnNumber + column].Team != Grid[currentCell.RowNumber, currentCell.ColumnNumber].Team) {
+                            isKingCheck = true;
+                        }
                     }
                 }
                 // Prevents pieces on edge of board throwing IndexOutOfRange errors
@@ -97,6 +94,11 @@ namespace ChessBoardModel {
                     // Diagonal attack
                     if (Grid[currentCell.RowNumber + row + -1, currentCell.ColumnNumber + column].IsCurrentlyOccupied == true) {
                         Grid[currentCell.RowNumber + row + -1, currentCell.ColumnNumber + column].IsLegalMove = true;
+
+                        if (Grid[currentCell.RowNumber + row + -1, currentCell.ColumnNumber + column].Piece == "King"
+                            && Grid[currentCell.RowNumber + row + -1, currentCell.ColumnNumber + column].Team != Grid[currentCell.RowNumber, currentCell.ColumnNumber].Team) {
+                            isKingCheck = true;
+                        }
                     }
                 }
             }
@@ -107,12 +109,18 @@ namespace ChessBoardModel {
                     && currentCell.RowNumber + row >= 0
                     && currentCell.ColumnNumber + column >= 0) {
                     Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].IsLegalMove = true;
+
+                    if (Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].Piece == "King"
+                        && Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column].Team != Grid[currentCell.RowNumber, currentCell.ColumnNumber].Team) {
+                        isKingCheck = true;
+                    }
                 }
             }
 
             void isValidCell(int row, int column, int range) {
                 // Right
                 if (row == +1 && column == 0) {
+                    bool isCheckPath = false;
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + i < boardSize
                         && currentCell.ColumnNumber + 0 < boardSize
@@ -120,6 +128,28 @@ namespace ChessBoardModel {
                         && currentCell.ColumnNumber + 0 >= 0) {
                             Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + 0].IsLegalMove = true;
 
+                            if (Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + 0].Piece == "King"
+                                && Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + 0].IsLegalMove == true
+                                && Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + 0].Team != Grid[currentCell.RowNumber, currentCell.ColumnNumber].Team) {
+                                isKingCheck = true;
+                                isCheckPath = true;
+                            }
+
+                            if (isCheckPath == true) {
+                                for (int j = 1; j <= range; j++) {
+                                    if (currentCell.RowNumber + j < boardSize
+                                    && currentCell.ColumnNumber + 0 < boardSize
+                                    && currentCell.RowNumber + j >= 0
+                                    && currentCell.ColumnNumber + 0 >= 0
+                                    && Grid[currentCell.RowNumber + j, currentCell.ColumnNumber + 0].IsLegalMove == true) {
+                                        Grid[currentCell.RowNumber + j, currentCell.ColumnNumber + 0].IsCheckPath = true;
+
+                                        if (Grid[currentCell.RowNumber + j, currentCell.ColumnNumber + 0].IsCurrentlyOccupied == true) {
+                                            goto LoopEnd;
+                                        }
+                                    }
+                                }
+                            }
                             if (Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + 0].IsCurrentlyOccupied == true) {
                                 goto LoopEnd;
                             }
@@ -129,12 +159,36 @@ namespace ChessBoardModel {
                 }
                 // Left
                 if (row == -1 && column == 0) {
+                    bool isCheckPath = false;
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + -i < boardSize
                         && currentCell.ColumnNumber + 0 < boardSize
                         && currentCell.RowNumber + -i >= 0
                         && currentCell.ColumnNumber + 0 >= 0) {
                             Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + 0].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + 0].Piece == "King"
+                                && Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + 0].IsLegalMove == true
+                                && Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + 0].Team != Grid[currentCell.RowNumber, currentCell.ColumnNumber].Team) {
+                                isKingCheck = true;
+                                isCheckPath = true;
+                            }
+
+                            if (isCheckPath == true) {
+                                for (int j = 1; j <= range; j++) {
+                                    if (currentCell.RowNumber + -j < boardSize
+                                    && currentCell.ColumnNumber + 0 < boardSize
+                                    && currentCell.RowNumber + -j >= 0
+                                    && currentCell.ColumnNumber + 0 >= 0
+                                    && Grid[currentCell.RowNumber + -j, currentCell.ColumnNumber + 0].IsLegalMove == true) {
+                                        Grid[currentCell.RowNumber + -j, currentCell.ColumnNumber + 0].IsCheckPath = true;
+
+                                        if (Grid[currentCell.RowNumber + -j, currentCell.ColumnNumber + 0].IsCurrentlyOccupied == true) {
+                                            goto LoopEnd;
+                                        }
+                                    }
+                                }
+                            }
 
                             if (Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + 0].IsCurrentlyOccupied == true) {
                                 goto LoopEnd;
@@ -145,12 +199,36 @@ namespace ChessBoardModel {
                 }
                 // Down
                 if (row == 0 && column == +1) {
+                    bool isCheckPath = false;
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + 0 < boardSize
                         && currentCell.ColumnNumber + i < boardSize
                         && currentCell.RowNumber + 0 >= 0
                         && currentCell.ColumnNumber + i >= 0) {
                             Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + i].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + i].Piece == "King"
+                                && Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + i].IsLegalMove == true
+                                && Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + i].Team != Grid[currentCell.RowNumber, currentCell.ColumnNumber].Team) {
+                                isKingCheck = true;
+                                isCheckPath = true;
+                            }
+
+                            if (isCheckPath == true) {
+                                for (int j = 1; j <= range; j++) {
+                                    if (currentCell.RowNumber + 0 < boardSize
+                                    && currentCell.ColumnNumber + j < boardSize
+                                    && currentCell.RowNumber + 0 >= 0
+                                    && currentCell.ColumnNumber + j >= 0
+                                    && Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + j].IsLegalMove == true) {
+                                        Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + j].IsCheckPath = true;
+
+                                        if (Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + j].IsCurrentlyOccupied == true) {
+                                            goto LoopEnd;
+                                        }
+                                    }
+                                }
+                            }
 
                             if (Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + i].IsCurrentlyOccupied == true) {
                                 goto LoopEnd;
@@ -161,12 +239,36 @@ namespace ChessBoardModel {
                 }
                 // Up
                 if (row == 0 && column == -1) {
+                    bool isCheckPath = false;
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + 0 < boardSize
                         && currentCell.ColumnNumber + -i < boardSize
                         && currentCell.RowNumber + 0 >= 0
                         && currentCell.ColumnNumber + -i >= 0) {
                             Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + -i].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + -i].Piece == "King"
+                                && Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + -i].IsLegalMove == true
+                                && Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + -i].Team != Grid[currentCell.RowNumber, currentCell.ColumnNumber].Team) {
+                                isKingCheck = true;
+                                isCheckPath = true;
+                            }
+
+                            if (isCheckPath == true) {
+                                for (int j = 1; j <= range; j++) {
+                                    if (currentCell.RowNumber + 0 < boardSize
+                                    && currentCell.ColumnNumber + -j < boardSize
+                                    && currentCell.RowNumber + 0 >= 0
+                                    && currentCell.ColumnNumber + -j >= 0
+                                    && Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + -j].IsLegalMove == true) {
+                                        Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + -j].IsCheckPath = true;
+
+                                        if (Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + -j].IsCurrentlyOccupied == true) {
+                                            goto LoopEnd;
+                                        }
+                                    }
+                                }
+                            }
 
                             if (Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + -i].IsCurrentlyOccupied == true) {
                                 goto LoopEnd;
@@ -177,6 +279,7 @@ namespace ChessBoardModel {
                 }
                 // Down-Right
                 if (row == +1 && column == +1) {
+                    bool isCheckPath = false;
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + i < boardSize
                         && currentCell.ColumnNumber + i < boardSize
@@ -184,8 +287,27 @@ namespace ChessBoardModel {
                         && currentCell.ColumnNumber + i >= 0) {
                             Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + i].IsLegalMove = true;
 
-                            if (Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + i].Piece == "King") {
+                            if (Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + i].Piece == "King"
+                                && Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + i].IsLegalMove == true
+                                && Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + i].Team != Grid[currentCell.RowNumber, currentCell.ColumnNumber].Team) {
                                 isKingCheck = true;
+                                isCheckPath = true;
+                            }
+
+                            if (isCheckPath == true) {
+                                for (int j = 1; j <= range; j++) {
+                                    if (currentCell.RowNumber + j < boardSize
+                                    && currentCell.ColumnNumber + j < boardSize
+                                    && currentCell.RowNumber + j >= 0
+                                    && currentCell.ColumnNumber + j >= 0
+                                    && Grid[currentCell.RowNumber + j, currentCell.ColumnNumber + j].IsLegalMove == true) {
+                                        Grid[currentCell.RowNumber + j, currentCell.ColumnNumber + j].IsCheckPath = true;
+
+                                        if (Grid[currentCell.RowNumber + j, currentCell.ColumnNumber + j].IsCurrentlyOccupied == true) {
+                                            goto LoopEnd;
+                                        }
+                                    }
+                                }
                             }
 
                             if (Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + i].IsCurrentlyOccupied == true) {
@@ -197,12 +319,36 @@ namespace ChessBoardModel {
                 }
                 // Up-Left
                 if (row == -1 && column == -1) {
+                    bool isCheckPath = false;
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + -i < boardSize
                         && currentCell.ColumnNumber + -i < boardSize
                         && currentCell.RowNumber + -i >= 0
                         && currentCell.ColumnNumber + -i >= 0) {
                             Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + -i].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + -i].Piece == "King"
+                                && Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + -i].IsLegalMove == true
+                                && Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + -i].Team != Grid[currentCell.RowNumber, currentCell.ColumnNumber].Team) {
+                                isKingCheck = true;
+                                isCheckPath = true;
+                            }
+
+                            if (isCheckPath == true) {
+                                for (int j = 1; j <= range; j++) {
+                                    if (currentCell.RowNumber + -j < boardSize
+                                    && currentCell.ColumnNumber + -j < boardSize
+                                    && currentCell.RowNumber + -j >= 0
+                                    && currentCell.ColumnNumber + j >= 0
+                                    && Grid[currentCell.RowNumber + -j, currentCell.ColumnNumber + -j].IsLegalMove == true) {
+                                        Grid[currentCell.RowNumber + -j, currentCell.ColumnNumber + -j].IsCheckPath = true;
+
+                                        if (Grid[currentCell.RowNumber + -j, currentCell.ColumnNumber + -j].IsCurrentlyOccupied == true) {
+                                            goto LoopEnd;
+                                        }
+                                    }
+                                }
+                            }
 
                             if (Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + -i].IsCurrentlyOccupied == true) {
                                 goto LoopEnd;
@@ -213,12 +359,37 @@ namespace ChessBoardModel {
                 }
                 // Up-Right
                 if (row == +1 && column == -1) {
+                    bool isCheckPath = false;
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + i < boardSize
                         && currentCell.ColumnNumber + -i < boardSize
                         && currentCell.RowNumber + i >= 0
                         && currentCell.ColumnNumber + -i >= 0) {
                             Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + -i].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + -i].Piece == "King"
+                                && Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + -i].IsLegalMove == true
+                                && Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + -i].Team != Grid[currentCell.RowNumber, currentCell.ColumnNumber].Team) {
+                                isKingCheck = true;
+                                isCheckPath = true;
+                            }
+
+                            if (isCheckPath == true) {
+                                for (int j = 1; j <= range; j++) {
+                                    if (currentCell.RowNumber + j < boardSize
+                                    && currentCell.ColumnNumber + -j < boardSize
+                                    && currentCell.RowNumber + j >= 0
+                                    && currentCell.ColumnNumber + -j >= 0
+                                    && Grid[currentCell.RowNumber + j, currentCell.ColumnNumber + -j].IsLegalMove == true
+                                    ) {
+                                        Grid[currentCell.RowNumber + j, currentCell.ColumnNumber + -j].IsCheckPath = true;
+
+                                        if (Grid[currentCell.RowNumber + j, currentCell.ColumnNumber + -j].IsCurrentlyOccupied == true) {
+                                            goto LoopEnd;
+                                        }
+                                    }
+                                }
+                            }
 
                             if (Grid[currentCell.RowNumber + i, currentCell.ColumnNumber + -i].IsCurrentlyOccupied == true) {
                                 goto LoopEnd;
@@ -229,12 +400,36 @@ namespace ChessBoardModel {
                 }
                 // Down-Left
                 if (row == -1 && column == +1) {
+                    bool isCheckPath = false;
                     for (int i = 1; i <= range; i++) {
                         if (currentCell.RowNumber + -i < boardSize
                         && currentCell.ColumnNumber + i < boardSize
                         && currentCell.RowNumber + -i >= 0
                         && currentCell.ColumnNumber + i >= 0) {
                             Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + i].IsLegalMove = true;
+
+                            if (Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + i].Piece == "King"
+                                && Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + i].IsLegalMove == true
+                                && Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + i].Team != Grid[currentCell.RowNumber, currentCell.ColumnNumber].Team) {
+                                isKingCheck = true;
+                                isCheckPath = true;
+                            }
+
+                            if (isCheckPath == true) {
+                                for (int j = 1; j <= range; j++) {
+                                    if (currentCell.RowNumber + -j < boardSize
+                                    && currentCell.ColumnNumber + j < boardSize
+                                    && currentCell.RowNumber + -j >= 0
+                                    && currentCell.ColumnNumber + j >= 0
+                                    && Grid[currentCell.RowNumber + -j, currentCell.ColumnNumber + j].IsLegalMove == true) {
+                                        Grid[currentCell.RowNumber + -j, currentCell.ColumnNumber + j].IsCheckPath = true;
+
+                                        if (Grid[currentCell.RowNumber + -j, currentCell.ColumnNumber + j].IsCurrentlyOccupied == true) {
+                                            goto LoopEnd;
+                                        }
+                                    }
+                                }
+                            }
 
                             if (Grid[currentCell.RowNumber + -i, currentCell.ColumnNumber + i].IsCurrentlyOccupied == true) {
                                 goto LoopEnd;
@@ -332,8 +527,4 @@ namespace ChessBoardModel {
             }
         }
     }
-
-
 }
-
-

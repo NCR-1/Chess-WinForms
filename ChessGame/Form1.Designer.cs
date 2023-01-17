@@ -24,7 +24,6 @@ namespace ChessGame {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.lbl_title = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lbl_a = new System.Windows.Forms.Label();
             this.lbl_b = new System.Windows.Forms.Label();
@@ -45,15 +44,6 @@ namespace ChessGame {
             this.btn_play = new System.Windows.Forms.Button();
             this.lbl_turn = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // lbl_title
-            // 
-            this.lbl_title.AutoSize = true;
-            this.lbl_title.Location = new System.Drawing.Point(13, 13);
-            this.lbl_title.Name = "lbl_title";
-            this.lbl_title.Size = new System.Drawing.Size(147, 13);
-            this.lbl_title.TabIndex = 0;
-            this.lbl_title.Text = "Practice playing chess offline!";
             // 
             // panel1
             // 
@@ -267,7 +257,6 @@ namespace ChessGame {
             this.Controls.Add(this.lbl_b);
             this.Controls.Add(this.lbl_a);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.lbl_title);
             this.Name = "Form1";
             this.Text = "Chess!";
             this.ResumeLayout(false);
@@ -276,8 +265,6 @@ namespace ChessGame {
         }
 
         #endregion
-
-        private System.Windows.Forms.Label lbl_title;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label lbl_a;
         private System.Windows.Forms.Label lbl_b;
