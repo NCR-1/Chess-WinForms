@@ -10,6 +10,7 @@ namespace ChessBoardModel {
         public bool IsCurrentlyOccupied { get; set; }
         public bool IsLegalMove { get; set; }
         public bool IsCheckPath { get; set; }
+        public bool IsCheckPiece { get; set; }
 
         public string Piece { get; set; }
         public string Team { get; set; }

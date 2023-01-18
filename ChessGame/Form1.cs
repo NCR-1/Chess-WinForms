@@ -142,17 +142,17 @@ namespace ChessGame {
                     }
                     btnGrid[x, y].ImageAlign = ContentAlignment.MiddleCenter;
 
-                    if (chessBoard.Grid[y, x].Piece == null) {
-                        //Console.Write("|      ");
-                        Console.Write($" | {chessBoard.Grid[y, x].IsCheckPath}");
-                    }
-                    else if (chessBoard.Grid[y, x].Piece != null) {
-                        //Console.Write(" | " + chessBoard.Grid[y, x].Piece);
-                        Console.Write($" | {chessBoard.Grid[y, x].IsCheckPath}");
-                    }
+                    //if (chessBoard.Grid[y, x].Piece == null) {
+                    //    //Console.Write("|      ");
+                    //    Console.Write($" | {chessBoard.Grid[y, x].IsCheckPath}");
+                    //}
+                    //else if (chessBoard.Grid[y, x].Piece != null) {
+                    //    //Console.Write(" | " + chessBoard.Grid[y, x].Piece);
+                    //    Console.Write($" | {chessBoard.Grid[y, x].IsCheckPath}");
+                    //}
                 }
-                Console.WriteLine();
-                Console.WriteLine("---------------------------------------------------------------");
+                //Console.WriteLine();
+                //Console.WriteLine("---------------------------------------------------------------");
             }
         }
 
@@ -198,24 +198,24 @@ namespace ChessGame {
                     }
 
                     // Piece movement - updates stored piece
-                    if (chessBoard.Grid[x, y].IsLegalMove == true) {
+                    if (chessBoard.Grid[x, y].IsLegalMove) {
                         lastPiece = currentCell.Piece;
                         lastPieceTeam = currentCell.Team;
                     }
 
                     // Show legal moves on board
-                    //if (chessBoard.Grid[x, y].IsLegalMove == true) {
-                    //    if ((x % 2 == 0 && y % 2 == 0) || (x % 2 != 0 && y % 2 != 0)) {
-                    //        btnGrid[x, y].BackColor = Color.LightGreen;
-                    //    }
-                    //    else {
-                    //        btnGrid[x, y].BackColor = Color.DarkGreen;
-                    //    }
-                    //}
-                    else if (chessBoard.Grid[x, y].IsLegalMove == false) {
+                    if (chessBoard.Grid[x, y].IsLegalMove) {
+                        if ((x % 2 == 0 && y % 2 == 0) || (x % 2 != 0 && y % 2 != 0)) {
+                            btnGrid[x, y].BackColor = Color.LightGreen;
+                        }
+                        else {
+                            btnGrid[x, y].BackColor = Color.DarkGreen;
+                        }
+                    }
+                    else if (!chessBoard.Grid[x, y].IsLegalMove) {
                         //chessBoard.Grid[x, y].BackColor = Color.Red;
                     }
-                    if (chessBoard.Grid[x, y].IsCurrentlyOccupied == true) {
+                    if (chessBoard.Grid[x, y].IsCurrentlyOccupied) {
                         //chessBoard.Grid[x, y].BackColor = Color.Red;
                     }
                 }
@@ -228,7 +228,7 @@ namespace ChessGame {
 
         //    for (int x = 0; x < chessBoard.Size; x++) {
         //        for (int y = 0; y < chessBoard.Size; y++) {
-        //            if (chessBoard.Grid[x, y].IsLegalMove == true) {
+        //            if (chessBoard.Grid[x, y].IsLegalMove) {
         //                lastPiece = chessBoard.Grid[_x, _y].Piece;
         //                lastPieceTeam = chessBoard.Grid[_x, _y].Team;
         //            }
@@ -238,11 +238,14 @@ namespace ChessGame {
 
         // Check all legal moves on the board to see if any moves intercept with the king (need to add team check to prevent checking own king)
         public void IsKingCheck() {
+            chessBoard.isKingCheck = false;
+
             // Clear check path before reviewing if king is in check
             for (int x = 0; x < chessBoard.Size; x++) {
                 for (int y = 0; y < chessBoard.Size; y++) {
                     chessBoard.Grid[x, y].IsCheckPath = false;
                     chessBoard.Grid[x, y].IsLegalMove = false;
+                    chessBoard.Grid[x, y].IsCheckPiece = false;
                 }
             }
 
@@ -257,12 +260,9 @@ namespace ChessGame {
                         if (pieceTeam == "White") {
                             chessBoard.CheckLegalMoves(currentCell, chessPiece, pieceTeam);
                         }
-
-                        if (chessBoard.isKingCheck == true) {
-                            Console.WriteLine($"*** KING IS IN CHECK *** by {chessPiece} at location {x},{y}");
-                        }
                     }
-                    if (chessBoard.Grid[x, y].IsCheckPath == true) {
+
+                    if (chessBoard.Grid[x, y].IsCheckPath) {
                         if ((x % 2 == 0 && y % 2 == 0) || (x % 2 != 0 && y % 2 != 0)) {
                             btnGrid[x, y].BackColor = Color.LightSalmon;
                         }
@@ -284,12 +284,9 @@ namespace ChessGame {
                         if (pieceTeam == "Black") {
                             chessBoard.CheckLegalMoves(currentCell, chessPiece, pieceTeam);
                         }
-
-                        if (chessBoard.isKingCheck == true) {
-                            Console.WriteLine($"*** KING IS IN CHECK *** by {chessPiece} at location {x},{y}");
-                        }
                     }
-                    if (chessBoard.Grid[x, y].IsCheckPath == true) {
+
+                    if (chessBoard.Grid[x, y].IsCheckPath) {
                         if ((x % 2 == 0 && y % 2 == 0) || (x % 2 != 0 && y % 2 != 0)) {
                             btnGrid[x, y].BackColor = Color.LightSalmon;
                         }
@@ -320,14 +317,14 @@ namespace ChessGame {
             Cell currentCell = chessBoard.Grid[_x, _y];
 
             // Turn system - only correct team pieces can be moved on their turn
-            if (iswhiteMoving == true && currentCell.Team != "White" && moveCounter != 1) { return; }
-            else if ((iswhiteMoving == false && currentCell.Team != "Black" && moveCounter != 1)) { return; }
+            if (iswhiteMoving && currentCell.Team != "White" && moveCounter != 1) { return; }
+            else if ((!iswhiteMoving && currentCell.Team != "Black" && moveCounter != 1)) { return; }
 
             string pieceTeam = currentCell.Team;
             bool isLegalMove = currentCell.IsLegalMove;
 
             // lastX/Y < 8 checks that value is in range of board - used for allowing one move at a time
-            if (isLegalMove == true && lastX < 8 && lastY < 8) {
+            if (isLegalMove && lastX < 8 && lastY < 8) {
                 chessBoard.Grid[lastX, lastY].Piece = null;
                 chessBoard.Grid[lastX, lastY].Team = null;
             }
@@ -352,13 +349,12 @@ namespace ChessGame {
             }
 
             // Determine next legal moves
-            IsKingCheck();
             chessBoard.CheckLegalMoves(currentCell, chessPiece, pieceTeam);
             ShowLegalMoves(location);
             //MovePiece(location);
 
             // Move piece on click of second button (2nd button is where piece should be moved to)
-            if (isLegalMove == true && moveCounter == 2) {
+            if (isLegalMove && moveCounter == 2) {
                 // Add captured pieces to List<String>
                 switch (chessBoard.Grid[lastX, lastY].Team) {
                     case "White":
@@ -395,7 +391,7 @@ namespace ChessGame {
 
         // Changes color of play button depending on whether player is making a move
         private void MoveButtonColor() {
-            if (isMoving == true) {
+            if (isMoving) {
                 btn_play.BackColor = Color.Green;
             }
             else {
@@ -412,7 +408,7 @@ namespace ChessGame {
         private void btn_play_Click(object sender, EventArgs e) {
             isMoving ^= true;
             iswhiteMoving ^= true;
-            if (iswhiteMoving == true) {
+            if (iswhiteMoving) {
                 lbl_turn.Text = "White Moving...";
             }
             else {
