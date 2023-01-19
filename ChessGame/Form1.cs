@@ -238,7 +238,8 @@ namespace ChessGame {
 
         // Check all legal moves on the board to see if any moves intercept with the king (need to add team check to prevent checking own king)
         public void IsKingCheck() {
-            chessBoard.isKingCheck = false;
+            chessBoard.isKingCheckWhite = false;
+            chessBoard.isKingCheckBlack = false;
 
             // Clear check path before reviewing if king is in check
             for (int x = 0; x < chessBoard.Size; x++) {
@@ -246,6 +247,8 @@ namespace ChessGame {
                     chessBoard.Grid[x, y].IsCheckPath = false;
                     chessBoard.Grid[x, y].IsLegalMove = false;
                     chessBoard.Grid[x, y].IsCheckPiece = false;
+                    chessBoard.Grid[y, x].IsAttackPathWhite = false;
+                    chessBoard.Grid[y, x].IsAttackPathBlack = false;
                 }
             }
 
