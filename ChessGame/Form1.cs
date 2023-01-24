@@ -72,6 +72,11 @@ namespace ChessGame {
                 chessBoard.Grid[i, 7].Team = "White";
                 chessBoard.Grid[i, 0].Piece = pieces[i];
                 chessBoard.Grid[i, 0].Team = "Black";
+
+                //chessBoard.Grid[i, 4].Piece = "King";
+                //chessBoard.Grid[i, 4].Team = "White";
+                //chessBoard.Grid[i, 3].Piece = "King";
+                //chessBoard.Grid[i, 3].Team = "Black";
             }
 
             DrawPieces();
@@ -142,17 +147,18 @@ namespace ChessGame {
                     }
                     btnGrid[x, y].ImageAlign = ContentAlignment.MiddleCenter;
 
-                    //if (chessBoard.Grid[y, x].Piece == null) {
-                    //    //Console.Write("|      ");
-                    //    Console.Write($" | {chessBoard.Grid[y, x].IsCheckPath}");
-                    //}
-                    //else if (chessBoard.Grid[y, x].Piece != null) {
-                    //    //Console.Write(" | " + chessBoard.Grid[y, x].Piece);
-                    //    Console.Write($" | {chessBoard.Grid[y, x].IsCheckPath}");
-                    //}
+                    if (chessBoard.Grid[y, x].Piece == null) {
+                        //Console.Write("|      ");
+                        //Console.Write(chessBoard.Grid[y, x].IsAttackPathBlack);
+                        Console.Write(" | " + chessBoard.Grid[y, x].IsAttackPathBlack);
+
+                    }
+                    else if (chessBoard.Grid[y, x].Piece != null) {
+                        Console.Write(" | " + chessBoard.Grid[y, x].IsAttackPathBlack);
+                    }
                 }
-                //Console.WriteLine();
-                //Console.WriteLine("---------------------------------------------------------------");
+                Console.WriteLine();
+                Console.WriteLine("---------------------------------------------------------------");
             }
         }
 
@@ -216,30 +222,15 @@ namespace ChessGame {
                         //chessBoard.Grid[x, y].BackColor = Color.Red;
                     }
                     if (chessBoard.Grid[x, y].IsCurrentlyOccupied) {
-                        //chessBoard.Grid[x, y].BackColor = Color.Red;
+                        //btnGrid[x, y].BackColor = Color.Red;
                     }
                 }
             }
         }
 
-        //public void MovePiece(Point location) {
-        //    int _x = location.X;
-        //    int _y = location.Y;
-
-        //    for (int x = 0; x < chessBoard.Size; x++) {
-        //        for (int y = 0; y < chessBoard.Size; y++) {
-        //            if (chessBoard.Grid[x, y].IsLegalMove) {
-        //                lastPiece = chessBoard.Grid[_x, _y].Piece;
-        //                lastPieceTeam = chessBoard.Grid[_x, _y].Team;
-        //            }
-        //        }
-        //    }
-        //}
 
         // Check all legal moves on the board to see if any moves intercept with the king (need to add team check to prevent checking own king)
         public void IsKingCheck() {
-            chessBoard.isKingCheckWhite = false;
-            chessBoard.isKingCheckBlack = false;
 
             // Clear check path before reviewing if king is in check
             for (int x = 0; x < chessBoard.Size; x++) {
@@ -249,6 +240,14 @@ namespace ChessGame {
                     chessBoard.Grid[x, y].IsCheckPiece = false;
                     chessBoard.Grid[y, x].IsAttackPathWhite = false;
                     chessBoard.Grid[y, x].IsAttackPathBlack = false;
+                    chessBoard.Grid[y, x].IsAttackPathBlack = false;
+
+                    if (chessBoard.Grid[x, y].Piece != null) {
+                        chessBoard.Grid[x, y].IsCurrentlyOccupied = true;
+                    }
+                    else {
+                        chessBoard.Grid[x, y].IsCurrentlyOccupied = false;
+                    }
                 }
             }
 
@@ -273,6 +272,15 @@ namespace ChessGame {
                             btnGrid[x, y].BackColor = Color.Salmon;
                         }
                     }
+
+                    //if (lbl_turn.Text != "" && chessBoard.Grid[x, y].IsAttackPathWhite) {
+                    //    if ((x % 2 == 0 && y % 2 == 0) || (x % 2 != 0 && y % 2 != 0)) {
+                    //        btnGrid[x, y].BackColor = Color.LightPink;
+                    //    }
+                    //    else {
+                    //        btnGrid[x, y].BackColor = Color.Pink;
+                    //    }
+                    //}
                 }
             }
 
@@ -297,6 +305,15 @@ namespace ChessGame {
                             btnGrid[x, y].BackColor = Color.Salmon;
                         }
                     }
+
+                    //if (lbl_turn.Text != "" && chessBoard.Grid[x, y].IsAttackPathBlack) {
+                    //    if ((x % 2 == 0 && y % 2 == 0) || (x % 2 != 0 && y % 2 != 0)) {
+                    //        btnGrid[x, y].BackColor = Color.LightSkyBlue;
+                    //    }
+                    //    else {
+                    //        btnGrid[x, y].BackColor = Color.SkyBlue;
+                    //    }
+                    //}
                 }
             }
         }
@@ -354,7 +371,6 @@ namespace ChessGame {
             // Determine next legal moves
             chessBoard.CheckLegalMoves(currentCell, chessPiece, pieceTeam);
             ShowLegalMoves(location);
-            //MovePiece(location);
 
             // Move piece on click of second button (2nd button is where piece should be moved to)
             if (isLegalMove && moveCounter == 2) {
