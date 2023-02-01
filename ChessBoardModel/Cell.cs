@@ -11,6 +11,7 @@ namespace ChessBoardModel {
         public bool IsLegalMove { get; set; }
         public bool IsCheckPath { get; set; }
         public bool IsCheckPiece { get; set; }
+        public bool IsAttackPiece { get; set; }
         public bool IsAttackPathWhite { get; set; }
         public bool IsAttackPathBlack { get; set; }
 

@@ -30,10 +30,8 @@ namespace ChessBoardModel {
 
         public bool isKingCheckWhite = false;
         public bool isKingCheckBlack = false;
-        public bool isKingAttackLineWhite = false;
-        public bool isKingAttackLineBlack = false;
-        public int totalLegalMovesWhite;
-        public int totalLegalMovesBlack;
+        public int legalMovesCounterWhite = 0;   
+        public int legalMovesCounterBlack = 0;
 
         public void CheckLegalMoves(Cell currentCell, string chessPiece, string pieceTeam) {
             int boardSize = 8;
@@ -80,19 +78,85 @@ namespace ChessBoardModel {
 
                         if (isCheckPath) {
                             targetCell.IsCheckPath = true;
-
+                             
                             if (targetCell.IsCurrentlyOccupied) {
-                                //if (targetCell.Piece != "King") {
-                                    goto CheckLoopEnd;
-                                //}
+                                goto LoopEnd;
                             }
                         }
                     }
                 }
-            CheckLoopEnd:;
+            LoopEnd:;
+            }
+
+            void CheckAttackPath(int row, int column, int range, bool isKingAttackLineWhite, bool isKingAttackLineBlack) {
+                for (int i = 1; i <= range; i++) {
+                    int rowNum = 0;
+                    int colNum = 0;
+
+                    if (row == 1) {
+                        rowNum = i;
+                    }
+                    if (row == 0) {
+                        rowNum = i * 0;
+                    }
+                    if (row == -1) {
+                        rowNum = i * -1;
+                    }
+
+                    if (column == 1) {
+                        colNum = i;
+                    }
+                    if (column == 0) {
+                        colNum = i * 0;
+                    }
+                    if (column == -1) {
+                        colNum = i * -1;
+                    }
+
+                    if (currentCell.RowNumber + rowNum < boardSize
+                    && currentCell.ColumnNumber + colNum < boardSize
+                    && currentCell.RowNumber + rowNum >= 0
+                    && currentCell.ColumnNumber + colNum >= 0
+                    && Grid[currentCell.RowNumber + rowNum, currentCell.ColumnNumber + colNum].IsLegalMove) {
+
+                        Cell targetCell = Grid[currentCell.RowNumber + rowNum, currentCell.ColumnNumber + colNum];
+
+                        if (isKingAttackLineWhite) {
+                            targetCell.IsAttackPathWhite = true;
+
+                            if (targetCell.Piece == "King") {
+                                goto LoopEnd;
+                            }
+                        }
+
+                        if (currentCell.Team == "White"
+                            && currentCell.IsAttackPathBlack
+                            && !targetCell.IsAttackPathBlack) {
+                            targetCell.IsLegalMove = false;
+                        }
+
+                        if (isKingAttackLineBlack) {
+                            targetCell.IsAttackPathBlack = true;
+
+                            if (targetCell.Piece == "King") {
+                                goto LoopEnd;
+                            }
+                        }
+
+                        if (currentCell.Team == "Black" 
+                            && currentCell.IsAttackPathWhite
+                            && !targetCell.IsAttackPathWhite) {
+                            targetCell.IsLegalMove = false;
+                        }
+                    }
+                }
+            LoopEnd:;
             }
 
             void AttackPath(int row, int column, int range) {
+
+                bool isKingAttackLineWhite = false;
+                bool isKingAttackLineBlack = false;
 
                 for (int i = 1; i <= range; i++) {
                     int rowNum = 0;
@@ -125,89 +189,25 @@ namespace ChessBoardModel {
 
                         Cell targetCell = Grid[currentCell.RowNumber + rowNum, currentCell.ColumnNumber + colNum];
 
-                        if (targetCell.IsCurrentlyOccupied) {
-                            if (targetCell.Piece != "King") {
-                                goto LoopEnd;
-                            }
+                        if (currentCell.Team == "White"
+                            && targetCell.Piece == "King"
+                            && targetCell.Team != currentCell.Team) {
+
+                            isKingAttackLineWhite = true;
+                            currentCell.IsAttackPiece = true;
                         }
 
-                        // Stores the attacking line of the piece - used for preventing King moving into attacking line
-                        if (currentCell.Team == "White") {
+                        if (currentCell.Team == "Black"
+                            && targetCell.Piece == "King"
+                            && targetCell.Team != currentCell.Team) {
 
-                            targetCell.IsAttackPathWhite = true;
-                            if (targetCell.Piece == "King"
-                                && targetCell.Team != currentCell.Team) {
-                                isKingAttackLineWhite = true;
-                            }
-
-                            if (isKingAttackLineBlack
-                                && currentCell.IsAttackPathBlack
-                                && !targetCell.IsAttackPathBlack) {
-                                targetCell.IsLegalMove = false;
-                            }
-
-                            // Prevent King entering attacking line of enemy piece
-                            if (currentCell.Piece == "King") {
-                                if (targetCell.IsAttackPathBlack) {
-                                    targetCell.IsLegalMove = false;
-                                }
-
-                                if (isKingCheckWhite) {
-                                    if (targetCell.IsAttackPathBlack) {
-                                        targetCell.IsLegalMove = false;
-                                    }
-                                    if (!targetCell.IsAttackPathBlack) {
-                                        targetCell.IsLegalMove = true;
-                                    }
-                                    if (targetCell.IsCheckPiece) {
-                                        targetCell.IsLegalMove = true;
-                                    }
-                                }
-                            }
+                            isKingAttackLineBlack = true;
+                            currentCell.IsAttackPiece = true;
                         }
-
-                        if (currentCell.Team == "Black") {
-
-                            targetCell.IsAttackPathBlack = true;
-                            if (targetCell.Piece == "King"
-                                && targetCell.Team != currentCell.Team) {
-                                isKingAttackLineBlack = true;
-                            }
-
-                            if (isKingAttackLineWhite
-                                && currentCell.IsAttackPathWhite
-                                && !targetCell.IsAttackPathWhite) {
-                                targetCell.IsLegalMove = false;
-                            }
-
-                            // Prevent King entering attacking line of enemy piece
-                            if (currentCell.Piece == "King") {
-                                if (targetCell.IsAttackPathWhite) {
-                                    targetCell.IsLegalMove = false;
-                                }
-
-                                if (isKingCheckBlack) {
-                                    if (targetCell.IsAttackPathWhite) {
-                                        targetCell.IsLegalMove = false;
-                                    }
-                                    if (!targetCell.IsAttackPathWhite) {
-                                        targetCell.IsLegalMove = true;
-                                    }
-                                    if (targetCell.IsCheckPiece) {
-                                        targetCell.IsLegalMove = true;
-                                    }
-                                }
-                            }
-                        }
-
-                        if (targetCell.IsCurrentlyOccupied) {
-                            if (targetCell.Piece != "King") {
-                                goto LoopEnd;
-                            }
-                        }
+                        // Checks if the path of the piece intercepts with the King but is blocked therfore not placing it in check
+                        CheckAttackPath(row, column, range, isKingAttackLineWhite, isKingAttackLineBlack);
                     }
                 }
-            LoopEnd:;
             }
 
             void isValidCell(int row, int column, int range) {
@@ -272,10 +272,29 @@ namespace ChessBoardModel {
                                     targetCell.IsLegalMove = true;
                                 }
                             }
+
+                            // Prevent King entering attacking line of enemy piece
+                            if (currentCell.Piece == "King") {
+                                if (targetCell.IsAttackPathBlack) {
+                                    targetCell.IsLegalMove = false;
+                                }
+
+                                if (isKingCheckWhite) {
+                                    if (targetCell.IsAttackPathBlack) {
+                                        targetCell.IsLegalMove = false;
+                                    }
+                                    if (!targetCell.IsAttackPathBlack) {
+                                        targetCell.IsLegalMove = true;
+                                    }
+                                    if (targetCell.IsCheckPiece) {
+                                        targetCell.IsLegalMove = true;
+                                    }
+                                }
+                            }
                         }
 
                         if (currentCell.Team == "Black") {
-
+                            
                             //Checks to see if legal moves intercept the King piece of other team
                             if (targetCell.Piece == "King"
                                 && targetCell.IsLegalMove
@@ -298,12 +317,31 @@ namespace ChessBoardModel {
                                     targetCell.IsLegalMove = true;
                                 }
                             }
+
+                            // Prevent King entering attacking line of enemy piece
+                            if (currentCell.Piece == "King") {
+                                if (targetCell.IsAttackPathWhite) {
+                                    targetCell.IsLegalMove = false;
+                                }
+
+                                if (isKingCheckBlack) {
+                                    if (targetCell.IsAttackPathWhite) {
+                                        targetCell.IsLegalMove = false;
+                                    }
+                                    if (!targetCell.IsAttackPathWhite) {
+                                        targetCell.IsLegalMove = true;
+                                    }
+                                    if (targetCell.IsCheckPiece) {
+                                        targetCell.IsLegalMove = true;
+                                    }
+                                }
+                            }
                         }
 
                         CheckPath(row, column, range, isCheckPath);
-                        AttackPath(row, column, range);
 
-                        if (targetCell.IsCurrentlyOccupied) {
+                        if (targetCell.IsCurrentlyOccupied
+                            && targetCell.Piece != "King") {
                             goto LoopEnd;
                         }
                     }
@@ -350,6 +388,19 @@ namespace ChessBoardModel {
                                 Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].IsLegalMove = false;
                             }
                         }
+
+                        if (currentCell.Team == "White"
+                            && currentCell.IsAttackPathBlack
+                            && !Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].IsAttackPathBlack) {
+                            Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].IsLegalMove = false;
+                        }
+
+                        if (currentCell.Team == "Black"
+                            && currentCell.IsAttackPathWhite
+                            && !Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].IsAttackPathWhite) {
+                            Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].IsLegalMove = false;
+                        }
+
                         if (Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].IsCurrentlyOccupied) {
                             Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].IsLegalMove = false;
                             goto LoopEnd;
@@ -359,22 +410,12 @@ namespace ChessBoardModel {
                 }
                 LoopEnd:;
 
-                // Pawn take piece (attack) - diagnonal move
-                void pawnAttack(int direction) {
+                //Pawn take piece(attack) - diagnonal move
+                    void pawnAttack(int direction) {
                     if (currentCell.RowNumber + direction >= 0
                     && currentCell.RowNumber + direction < boardSize) {
                         bool isCheckPath = false;
 
-                        // Stores the attacking line of the piece - used for preventing King moving into attacking line
-                        if (currentCell.Team == "White"
-                            && currentCell.Team != Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].Team) {
-                            Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsAttackPathWhite = true;
-                        }
-                        // Stores the attacking line of the piece - used for preventing King moving into attacking line
-                        if (currentCell.Team == "Black"
-                            && currentCell.Team != Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].Team) {
-                            Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsAttackPathBlack = true;
-                        }
                         // Diagonal attack
                         if (Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsCurrentlyOccupied) {
                             Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsLegalMove = true;
@@ -414,16 +455,36 @@ namespace ChessBoardModel {
                                     Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsLegalMove = false;
                                 }
                             }
+
+                            if (currentCell.Team == "White"
+                                && currentCell.IsAttackPathBlack
+                                && !Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsAttackPathBlack) {
+                                Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsLegalMove = false;
+
+                                if (Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsAttackPiece) {
+                                    Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsLegalMove = true;
+                                }
+                            }
+
+                            if (currentCell.Team == "Black"
+                                && currentCell.IsAttackPathWhite
+                                && !Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsAttackPathWhite) {
+                                Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsLegalMove = false;
+
+                                if (Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsAttackPiece) {
+                                    Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsLegalMove = true;
+                                }
+                            }
                         }
                     }
                 }
-
                 pawnAttack(1);
                 pawnAttack(-1);
             }
 
             void isValidCellKnight(int row, int column) {
                 bool isCheckPath = false;
+
                 if (currentCell.RowNumber + row < boardSize
                     && currentCell.ColumnNumber + column < boardSize
                     && currentCell.RowNumber + row >= 0
@@ -432,16 +493,6 @@ namespace ChessBoardModel {
                     Cell targetCell = Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column];
 
                     targetCell.IsLegalMove = true;
-
-                    // Stores the attacking line of the piece - used for preventing King moving into attacking line
-                    if (currentCell.Team == "White"
-                        && targetCell.Team != currentCell.Team) {
-                        targetCell.IsAttackPathWhite = true;
-                    }
-                    if (currentCell.Team == "Black"
-                        && targetCell.Team != currentCell.Team) {
-                        targetCell.IsAttackPathBlack = true;
-                    }
 
                     // Check the king
                     if (targetCell.Piece == "King"
@@ -460,10 +511,10 @@ namespace ChessBoardModel {
                         targetCell.IsCheckPath = true;
 
                         if (targetCell.IsCurrentlyOccupied) {
-                            goto CheckLoopEnd;
+                            goto LoopEnd;
                         }
                     }
-                CheckLoopEnd:;
+                LoopEnd:;
 
                     // Only moves that intercept the check line are legal when king is in check
                     if (isKingCheckWhite && currentCell.Team == "White") {
@@ -505,6 +556,15 @@ namespace ChessBoardModel {
                     isValidCell(-1, +1, 1); // Down-Left
                     isValidCell(+1, +1, 1); // Down-Right
 
+                    AttackPath(0, -1, 1); // Up
+                    AttackPath(0, +1, 1); // Down
+                    AttackPath(-1, 0, 1); // Left
+                    AttackPath(+1, 0, 1); // Right
+                    AttackPath(-1, -1, 1); // Up-Left
+                    AttackPath(+1, -1, 1); // Up-Right
+                    AttackPath(-1, +1, 1); // Down-Left
+                    AttackPath(+1, +1, 1); // Down-Right
+
                     break;
 
                 case "Queen":
@@ -519,6 +579,15 @@ namespace ChessBoardModel {
                     isValidCell(-1, +1, 7); // Down-Left
                     isValidCell(+1, +1, 7); // Down-Right
 
+                    AttackPath(0, -1, 7); // Up
+                    AttackPath(0, +1, 7); // Down
+                    AttackPath(-1, 0, 7); // Left
+                    AttackPath(+1, 0, 7); // Right
+                    AttackPath(-1, -1, 7); // Up-Left
+                    AttackPath(+1, -1, 7); // Up-Right
+                    AttackPath(-1, +1, 7); // Down-Left
+                    AttackPath(+1, +1, 7); // Down-Right
+
                     break;
 
                 case "Rook":
@@ -529,6 +598,11 @@ namespace ChessBoardModel {
                     isValidCell(-1, 0, 7); // Left
                     isValidCell(+1, 0, 7); // Right
 
+                    AttackPath(0, -1, 7); // Up
+                    AttackPath(0, +1, 7); // Down
+                    AttackPath(-1, 0, 7); // Left
+                    AttackPath(+1, 0, 7); // Right
+
                     break;
 
                 case "Bishop":
@@ -538,6 +612,11 @@ namespace ChessBoardModel {
                     isValidCell(+1, -1, 7); // Up-Right
                     isValidCell(-1, +1, 7); // Down-Left
                     isValidCell(+1, +1, 7); // Down-Right
+
+                    AttackPath(-1, -1, 7); // Up-Left
+                    AttackPath(+1, -1, 7); // Up-Right
+                    AttackPath(-1, +1, 7); // Down-Left
+                    AttackPath(+1, +1, 7); // Down-Right
 
                     break;
 

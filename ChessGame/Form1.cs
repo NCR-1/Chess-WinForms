@@ -73,10 +73,12 @@ namespace ChessGame {
                 chessBoard.Grid[i, 0].Piece = pieces[i];
                 chessBoard.Grid[i, 0].Team = "Black";
 
-                chessBoard.Grid[4, 3].Piece = "King";
-                chessBoard.Grid[4, 3].Team = "Black";
-                chessBoard.Grid[6, 5].Piece = "Queen";
-                chessBoard.Grid[6, 5].Team = "White";
+                //chessBoard.Grid[4, 3].Piece = "Queen";
+                //chessBoard.Grid[4, 3].Team = "Black";
+                //chessBoard.Grid[6, 5].Piece = "King";
+                //chessBoard.Grid[6, 5].Team = "White";
+                //chessBoard.Grid[5, 4].Piece = "Rook";
+                //chessBoard.Grid[5, 4].Team = "White";
             }
 
             DrawPieces();
@@ -147,15 +149,15 @@ namespace ChessGame {
                     }
                     btnGrid[x, y].ImageAlign = ContentAlignment.MiddleCenter;
 
-                    if (chessBoard.Grid[x, y].Piece != null) {
-                        Cell currentCell = chessBoard.Grid[x, y];
-                        string chessPiece = chessBoard.Grid[x, y].Piece;
-                        string pieceTeam = chessBoard.Grid[x, y].Team;
+                    //if (chessBoard.Grid[x, y].Piece != null) {
+                    //    Cell currentCell = chessBoard.Grid[x, y];
+                    //    string chessPiece = chessBoard.Grid[x, y].Piece;
+                    //    string pieceTeam = chessBoard.Grid[x, y].Team;
 
-                        if (pieceTeam == "White") {
-                            chessBoard.CheckLegalMoves(currentCell, chessPiece, pieceTeam);
-                        }
-                    }
+                    //    if (pieceTeam == "White") {
+                    //        chessBoard.CheckLegalMoves(currentCell, chessPiece, pieceTeam);
+                    //    }
+                    //}
 
                     if (chessBoard.Grid[x, y].IsCheckPath) {
                         if ((x % 2 == 0 && y % 2 == 0) || (x % 2 != 0 && y % 2 != 0)) {
@@ -166,7 +168,7 @@ namespace ChessGame {
                         }
                     }
 
-                    //if (chessBoard.Grid[x, y].IsAttackPathWhite) {
+                    //if (chessBoard.Grid[x, y].IsAttackPathBlack) {
                     //    if ((x % 2 == 0 && y % 2 == 0) || (x % 2 != 0 && y % 2 != 0)) {
                     //        btnGrid[x, y].BackColor = Color.DarkBlue;
                     //    }
@@ -175,18 +177,18 @@ namespace ChessGame {
                     //    }
                     //}
 
-                    if (chessBoard.Grid[y, x].Piece == null) {
-                        //Console.Write("|      ");
-                        //Console.Write(chessBoard.Grid[y, x].IsAttackPathBlack);
-                        Console.Write(" | " + chessBoard.Grid[y, x].IsCheckPath);
+                    //if (chessBoard.Grid[y, x].Piece == null) {
+                    //    //Console.Write("|      ");
+                    //    //Console.Write(chessBoard.Grid[y, x].IsAttackPathBlack);
+                    //    Console.Write(" | " + chessBoard.Grid[y, x].IsAttackPathBlack);
 
-                    }
-                    else if (chessBoard.Grid[y, x].Piece != null) {
-                        Console.Write(" | " + chessBoard.Grid[y, x].IsCheckPath);
-                    }
+                    //}
+                    //else if (chessBoard.Grid[y, x].Piece != null) {
+                    //    Console.Write(" | " + chessBoard.Grid[y, x].IsAttackPathBlack);
+                    //}
                 }
-                Console.WriteLine();
-                Console.WriteLine("---------------------------------------------------------------");
+                //Console.WriteLine();
+                //Console.WriteLine("---------------------------------------------------------------");
             }
         }
 
@@ -254,8 +256,8 @@ namespace ChessGame {
         // Check all legal moves on the board to see if any moves intercept with the king (need to add team check to prevent checking own king)
         public void IsKingCheck() {
 
-            chessBoard.totalLegalMovesWhite = 0;
-            chessBoard.totalLegalMovesBlack = 0;
+            chessBoard.legalMovesCounterWhite = 0;
+            chessBoard.legalMovesCounterBlack = 0;
 
             // Clear check path before reviewing if king is in check
             for (int x = 0; x < chessBoard.Size; x++) {
@@ -263,13 +265,12 @@ namespace ChessGame {
                     chessBoard.Grid[x, y].IsCheckPath = false;
                     chessBoard.Grid[x, y].IsLegalMove = false;
                     chessBoard.Grid[x, y].IsCheckPiece = false;
+                    chessBoard.Grid[x, y].IsAttackPiece = false;
                     chessBoard.Grid[y, x].IsAttackPathWhite = false;
                     chessBoard.Grid[y, x].IsAttackPathBlack = false;
 
                     chessBoard.isKingCheckWhite = false;
                     chessBoard.isKingCheckBlack = false;
-                    chessBoard.isKingAttackLineWhite = false;
-                    chessBoard.isKingAttackLineBlack = false;
 
                     if (chessBoard.Grid[x, y].Piece != null) {
                         chessBoard.Grid[x, y].IsCurrentlyOccupied = true;
@@ -291,6 +292,19 @@ namespace ChessGame {
                         if (pieceTeam == "White") {
                             chessBoard.CheckLegalMoves(currentCell, chessPiece, pieceTeam);
                         }
+                    }
+                }
+            }
+
+
+            // PROBLEM: If both teams are in the same for loop a8 rook is selected as lastX,lastY coordinate and removed when h2 pawn is moved first
+            for (int x = 0; x < chessBoard.Size; x++) {
+                for (int y = 0; y < chessBoard.Size; y++) {
+                    if (chessBoard.Grid[x, y].Piece != null) {
+                        Cell currentCell = chessBoard.Grid[x, y];
+                        string chessPiece = chessBoard.Grid[x, y].Piece;
+                        string pieceTeam = chessBoard.Grid[x, y].Team;
+
                         if (pieceTeam == "Black") {
                             chessBoard.CheckLegalMoves(currentCell, chessPiece, pieceTeam);
                         }
@@ -387,13 +401,13 @@ namespace ChessGame {
             foreach (var i in capturedBlack) { Console.Write(i.ToString() + ", "); }
             Console.WriteLine();
             Console.WriteLine("---------------");
-            Console.WriteLine("White legal moves: " + chessBoard.totalLegalMovesWhite);
-            Console.WriteLine("Black legal moves: " + chessBoard.totalLegalMovesBlack);
+            Console.WriteLine("White legal moves: " + chessBoard.legalMovesCounterWhite);
+            Console.WriteLine("Black legal moves: " + chessBoard.legalMovesCounterBlack);
 
-            if (chessBoard.totalLegalMovesWhite == 0) {
+            if (chessBoard.legalMovesCounterWhite == 0) {
                 Console.WriteLine("Black Wins via checkmate!");
             }
-            if (chessBoard.totalLegalMovesBlack == 0) {
+            if (chessBoard.legalMovesCounterBlack == 0) {
                 Console.WriteLine("White Wins via checkmate!");
             }
         }
