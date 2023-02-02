@@ -228,11 +228,6 @@ namespace ChessGame {
                         break;
                     }
 
-                    // Prevent being able to move to space occupied by own team
-                    if (chessBoard.Grid[x, y].Team == currentCell.Team) {
-                        chessBoard.Grid[x, y].IsLegalMove = false;
-                    }
-
                     // Piece movement - updates stored piece
                     if (chessBoard.Grid[x, y].IsLegalMove) {
                         lastPiece = currentCell.Piece;
@@ -248,6 +243,7 @@ namespace ChessGame {
                             btnGrid[x, y].BackColor = Color.DarkGreen;
                         }
                     }
+
                 }
             }
         }
@@ -268,6 +264,7 @@ namespace ChessGame {
                     chessBoard.Grid[x, y].IsAttackPiece = false;
                     chessBoard.Grid[y, x].IsAttackPathWhite = false;
                     chessBoard.Grid[y, x].IsAttackPathBlack = false;
+                    chessBoard.Grid[y, x].LegalMovesCounter = 0;
 
                     chessBoard.isKingCheckWhite = false;
                     chessBoard.isKingCheckBlack = false;
@@ -290,12 +287,19 @@ namespace ChessGame {
                         string pieceTeam = chessBoard.Grid[x, y].Team;
 
                         if (pieceTeam == "White") {
+                            chessBoard.legalMovesCounter = 0;
                             chessBoard.CheckLegalMoves(currentCell, chessPiece, pieceTeam);
+                            chessBoard.legalMovesCounterWhite += chessBoard.legalMovesCounter;
+                            //chessBoard.legalMovesCounterWhite += chessBoard.Grid[x, y].LegalMovesCounter;
                         }
+                        //if (pieceTeam == "Black") {
+                        //    chessBoard.legalMovesCounter = 0;
+                        //    chessBoard.CheckLegalMoves(currentCell, chessPiece, pieceTeam);
+                        //    chessBoard.legalMovesCounterBlack += chessBoard.legalMovesCounter;
+                        //}
                     }
                 }
             }
-
 
             // PROBLEM: If both teams are in the same for loop a8 rook is selected as lastX,lastY coordinate and removed when h2 pawn is moved first
             for (int x = 0; x < chessBoard.Size; x++) {
@@ -305,12 +309,23 @@ namespace ChessGame {
                         string chessPiece = chessBoard.Grid[x, y].Piece;
                         string pieceTeam = chessBoard.Grid[x, y].Team;
 
+                        //if (pieceTeam == "White") {
+                        //    chessBoard.legalMovesCounter = 0;
+                        //    chessBoard.CheckLegalMoves(currentCell, chessPiece, pieceTeam);
+                        //    chessBoard.legalMovesCounterWhite += chessBoard.legalMovesCounter;
+                        //}
+
                         if (pieceTeam == "Black") {
+                            chessBoard.legalMovesCounter = 0;
                             chessBoard.CheckLegalMoves(currentCell, chessPiece, pieceTeam);
+                            chessBoard.legalMovesCounterBlack += chessBoard.legalMovesCounter;
                         }
                     }
                 }
             }
+
+            Console.WriteLine("White legal moves: " + chessBoard.legalMovesCounterWhite);
+            Console.WriteLine("Black legal moves: " + chessBoard.legalMovesCounterBlack);
         }
 
         private int lastX;
@@ -401,8 +416,6 @@ namespace ChessGame {
             foreach (var i in capturedBlack) { Console.Write(i.ToString() + ", "); }
             Console.WriteLine();
             Console.WriteLine("---------------");
-            Console.WriteLine("White legal moves: " + chessBoard.legalMovesCounterWhite);
-            Console.WriteLine("Black legal moves: " + chessBoard.legalMovesCounterBlack);
 
             if (chessBoard.legalMovesCounterWhite == 0) {
                 Console.WriteLine("Black Wins via checkmate!");

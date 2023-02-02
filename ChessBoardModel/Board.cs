@@ -32,6 +32,7 @@ namespace ChessBoardModel {
         public bool isKingCheckBlack = false;
         public int legalMovesCounterWhite = 0;   
         public int legalMovesCounterBlack = 0;
+        public int legalMovesCounter = 0;
 
         public void CheckLegalMoves(Cell currentCell, string chessPiece, string pieceTeam) {
             int boardSize = 8;
@@ -247,6 +248,11 @@ namespace ChessBoardModel {
                         // Set all cells in direction to be a legal move
                         targetCell.IsLegalMove = true;
 
+                        // Prevent being able to move to space occupied by own team
+                        if (currentCell.Team == targetCell.Team) {
+                            targetCell.IsLegalMove = false;
+                        }
+
                         // Stores the attacking line of the piece - used for preventing King moving into attacking line
                         if (currentCell.Team == "White") {
 
@@ -262,13 +268,18 @@ namespace ChessBoardModel {
 
                             //Only moves that intercept the check line are legal when king is in check
                             if (isKingCheckWhite) {
-                                if (targetCell.IsCheckPath) {
+                                if (targetCell.IsCheckPath
+                                    && targetCell.Team != currentCell.Team) {
                                     targetCell.IsLegalMove = true;
                                 }
-                                if (!targetCell.IsCheckPath) {
+                                if (!targetCell.IsCheckPath 
+                                    && targetCell.Team != currentCell.Team) {
+
                                     targetCell.IsLegalMove = false;
                                 }
-                                if (targetCell.IsCheckPiece) {
+                                if (targetCell.IsCheckPiece 
+                                    && targetCell.Team != currentCell.Team) {
+
                                     targetCell.IsLegalMove = true;
                                 }
                             }
@@ -307,13 +318,18 @@ namespace ChessBoardModel {
 
                             //Only moves that intercept the check line are legal when king is in check
                             if (isKingCheckBlack) {
-                                if (targetCell.IsCheckPath) {
+                                if (targetCell.IsCheckPath
+                                    && targetCell.Team != currentCell.Team) {
                                     targetCell.IsLegalMove = true;
                                 }
-                                if (!targetCell.IsCheckPath) {
+                                if (!targetCell.IsCheckPath 
+                                    && targetCell.Team != currentCell.Team) {
+
                                     targetCell.IsLegalMove = false;
                                 }
-                                if (targetCell.IsCheckPiece) {
+                                if (targetCell.IsCheckPiece 
+                                    && targetCell.Team != currentCell.Team) {
+
                                     targetCell.IsLegalMove = true;
                                 }
                             }
@@ -339,6 +355,10 @@ namespace ChessBoardModel {
                         }
 
                         CheckPath(row, column, range, isCheckPath);
+
+                        if (targetCell.IsLegalMove) {
+                            currentCell.LegalMovesCounter++;
+                        }
 
                         if (targetCell.IsCurrentlyOccupied
                             && targetCell.Piece != "King") {
@@ -368,6 +388,11 @@ namespace ChessBoardModel {
                     && currentCell.ColumnNumber + colNum >= 0) {
 
                         Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].IsLegalMove = true;
+
+                        // Prevent being able to move to space occupied by own team
+                        if (currentCell.Team == Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].Team) {
+                            Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].IsLegalMove = false;
+                        }
 
                         // If king is in check Pawn can only move to position that intercepts check line
                         if (isKingCheckBlack
@@ -401,6 +426,10 @@ namespace ChessBoardModel {
                             Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].IsLegalMove = false;
                         }
 
+                        if (Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].IsLegalMove) {
+                            currentCell.LegalMovesCounter++;
+                        }
+
                         if (Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].IsCurrentlyOccupied) {
                             Grid[currentCell.RowNumber + 0, currentCell.ColumnNumber + colNum].IsLegalMove = false;
                             goto LoopEnd;
@@ -411,7 +440,7 @@ namespace ChessBoardModel {
                 LoopEnd:;
 
                 //Pawn take piece(attack) - diagnonal move
-                    void pawnAttack(int direction) {
+                void pawnAttack(int direction) {
                     if (currentCell.RowNumber + direction >= 0
                     && currentCell.RowNumber + direction < boardSize) {
                         bool isCheckPath = false;
@@ -419,6 +448,11 @@ namespace ChessBoardModel {
                         // Diagonal attack
                         if (Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsCurrentlyOccupied) {
                             Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsLegalMove = true;
+
+                            // Prevent being able to move to space occupied by own team
+                            if (currentCell.Team == Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].Team) {
+                                Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsLegalMove = false;
+                            }
 
                             // Place the king in check
                             if (Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].Piece == "King"
@@ -476,6 +510,10 @@ namespace ChessBoardModel {
                                 }
                             }
                         }
+                        
+                        if (Grid[currentCell.RowNumber + row + direction, currentCell.ColumnNumber + column].IsLegalMove) {
+                            currentCell.LegalMovesCounter++;
+                        }
                     }
                 }
                 pawnAttack(1);
@@ -493,6 +531,11 @@ namespace ChessBoardModel {
                     Cell targetCell = Grid[currentCell.RowNumber + row, currentCell.ColumnNumber + column];
 
                     targetCell.IsLegalMove = true;
+
+                    // Prevent being able to move to space occupied by own team
+                    if (currentCell.Team == targetCell.Team) {
+                        targetCell.IsLegalMove = false;
+                    }
 
                     // Check the king
                     if (targetCell.Piece == "King"
@@ -538,6 +581,10 @@ namespace ChessBoardModel {
                         if (targetCell.IsCheckPiece) {
                             targetCell.IsLegalMove = true;
                         }
+                    }
+
+                    if (targetCell.IsLegalMove) {
+                        currentCell.LegalMovesCounter++;
                     }
                 }
             }
@@ -654,6 +701,14 @@ namespace ChessBoardModel {
                     }
 
                     break;
+            }
+
+            for (int x = 0; x < Size; x++) {
+                for (int y = 0; y < Size; y++) {
+                    if (Grid[y, x].IsLegalMove) {
+                        legalMovesCounter++;
+                    }
+                }
             }
         }
     }

@@ -14,6 +14,7 @@ namespace ChessBoardModel {
         public bool IsAttackPiece { get; set; }
         public bool IsAttackPathWhite { get; set; }
         public bool IsAttackPathBlack { get; set; }
+        public int LegalMovesCounter { get; set; }
 
         public string Piece { get; set; }
         public string Team { get; set; }
