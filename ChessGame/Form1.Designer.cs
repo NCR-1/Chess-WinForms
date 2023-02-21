@@ -24,6 +24,8 @@ namespace ChessGame {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.panel1 = new System.Windows.Forms.Panel();
             this.lbl_a = new System.Windows.Forms.Label();
             this.lbl_b = new System.Windows.Forms.Label();
@@ -43,6 +45,12 @@ namespace ChessGame {
             this.lbl_1 = new System.Windows.Forms.Label();
             this.btn_play = new System.Windows.Forms.Button();
             this.lbl_turn = new System.Windows.Forms.Label();
+            this.flp_white = new System.Windows.Forms.FlowLayoutPanel();
+            this.flp_black = new System.Windows.Forms.FlowLayoutPanel();
+            this.lbl_whiteCaptured = new System.Windows.Forms.Label();
+            this.lbl_blackCaptured = new System.Windows.Forms.Label();
+            this.imgList_white = new System.Windows.Forms.ImageList(this.components);
+            this.imgList_black = new System.Windows.Forms.ImageList(this.components);
             this.SuspendLayout();
             // 
             // panel1
@@ -233,11 +241,69 @@ namespace ChessGame {
             this.lbl_turn.Size = new System.Drawing.Size(0, 13);
             this.lbl_turn.TabIndex = 19;
             // 
+            // flp_white
+            // 
+            this.flp_white.Location = new System.Drawing.Point(532, 73);
+            this.flp_white.Name = "flp_white";
+            this.flp_white.Size = new System.Drawing.Size(200, 215);
+            this.flp_white.TabIndex = 21;
+            // 
+            // flp_black
+            // 
+            this.flp_black.Location = new System.Drawing.Point(532, 330);
+            this.flp_black.Name = "flp_black";
+            this.flp_black.Size = new System.Drawing.Size(200, 215);
+            this.flp_black.TabIndex = 22;
+            // 
+            // lbl_whiteCaptured
+            // 
+            this.lbl_whiteCaptured.Location = new System.Drawing.Point(529, 56);
+            this.lbl_whiteCaptured.Name = "lbl_whiteCaptured";
+            this.lbl_whiteCaptured.Size = new System.Drawing.Size(100, 23);
+            this.lbl_whiteCaptured.TabIndex = 23;
+            this.lbl_whiteCaptured.Text = "Captured White:";
+            this.lbl_whiteCaptured.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // lbl_blackCaptured
+            // 
+            this.lbl_blackCaptured.Location = new System.Drawing.Point(529, 314);
+            this.lbl_blackCaptured.Name = "lbl_blackCaptured";
+            this.lbl_blackCaptured.Size = new System.Drawing.Size(100, 23);
+            this.lbl_blackCaptured.TabIndex = 24;
+            this.lbl_blackCaptured.Text = "Captured Black:";
+            this.lbl_blackCaptured.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // imgList_white
+            // 
+            this.imgList_white.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgList_white.ImageStream")));
+            this.imgList_white.TransparentColor = System.Drawing.Color.Transparent;
+            this.imgList_white.Images.SetKeyName(0, "WhitePawn.png");
+            this.imgList_white.Images.SetKeyName(1, "WhiteRook.png");
+            this.imgList_white.Images.SetKeyName(2, "WhiteKnight.png");
+            this.imgList_white.Images.SetKeyName(3, "WhiteBishop.png");
+            this.imgList_white.Images.SetKeyName(4, "WhiteQueen.png");
+            this.imgList_white.Images.SetKeyName(5, "WhiteKing.png");
+            // 
+            // imgList_black
+            // 
+            this.imgList_black.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgList_black.ImageStream")));
+            this.imgList_black.TransparentColor = System.Drawing.Color.Transparent;
+            this.imgList_black.Images.SetKeyName(0, "BlackPawn.png");
+            this.imgList_black.Images.SetKeyName(1, "BlackRook.png");
+            this.imgList_black.Images.SetKeyName(2, "BlackKnight.png");
+            this.imgList_black.Images.SetKeyName(3, "BlackBishop.png");
+            this.imgList_black.Images.SetKeyName(4, "BlackQueen.png");
+            this.imgList_black.Images.SetKeyName(5, "BlackKing.png");
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(534, 571);
+            this.ClientSize = new System.Drawing.Size(744, 571);
+            this.Controls.Add(this.lbl_blackCaptured);
+            this.Controls.Add(this.lbl_whiteCaptured);
+            this.Controls.Add(this.flp_black);
+            this.Controls.Add(this.flp_white);
             this.Controls.Add(this.lbl_turn);
             this.Controls.Add(this.btn_play);
             this.Controls.Add(this.lbl_1);
@@ -284,5 +350,11 @@ namespace ChessGame {
         private System.Windows.Forms.Label lbl_1;
         private System.Windows.Forms.Button btn_play;
         private System.Windows.Forms.Label lbl_turn;
+        private System.Windows.Forms.FlowLayoutPanel flp_white;
+        private System.Windows.Forms.FlowLayoutPanel flp_black;
+        private System.Windows.Forms.Label lbl_whiteCaptured;
+        private System.Windows.Forms.Label lbl_blackCaptured;
+        private System.Windows.Forms.ImageList imgList_white;
+        private System.Windows.Forms.ImageList imgList_black;
     }
 }

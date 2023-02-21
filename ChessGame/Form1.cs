@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ChessGame {
@@ -409,6 +410,9 @@ namespace ChessGame {
                 lastY = 30;
                 MoveButtonColor();
             }
+
+            populateCapturedPieces();
+
             Console.Write("Captured White: ");
             foreach (var i in capturedWhite) { Console.Write(i.ToString() + ", "); };
             Console.WriteLine();
@@ -451,6 +455,72 @@ namespace ChessGame {
                 lbl_turn.Text = "Black Moving...";
             }
             MoveButtonColor();
+        }
+
+        private void populateCapturedPieces() {
+
+            flp_white.Controls.Clear();
+            flp_black.Controls.Clear();
+
+            // Gets the index of the piece image from the image list
+            void imgListIndex(Button button){
+
+                button.Height = panel1.Width / (chessBoard.Size * 2);
+                button.Width = panel1.Width / (chessBoard.Size * 2);
+                button.FlatStyle = FlatStyle.Flat;
+                button.FlatAppearance.BorderSize = 0;
+
+                switch (button.Tag) {
+                    case "Pawn":
+                        button.ImageIndex = 0;
+                        break;
+
+                    case "Rook":
+                        button.ImageIndex = 1;
+                        break;
+
+                    case "Knight":
+                        button.ImageIndex = 2;
+                        break;
+
+                    case "Bishop":
+                        button.ImageIndex = 3;
+                        break;
+
+                    case "Queen":
+                        button.ImageIndex = 4;
+                        break;
+
+                    case "King":
+                        button.ImageIndex = 5;
+                        break;
+                }
+            }
+
+            // Draws the white captured pieces
+            if (capturedWhite != null && capturedWhite.Any()) {
+                foreach (var i in capturedWhite) {
+                    Button button = new Button();
+                    button.Tag = i;
+                    button.ImageList = imgList_white;
+
+                    imgListIndex(button);
+
+                    flp_white.Controls.Add(button);
+                };
+            }
+
+            if (capturedBlack != null && capturedBlack.Any()) {
+                foreach (var i in capturedBlack) {
+                    Button button = new Button();
+                    button.Tag = i;
+                    button.ImageList = imgList_black;
+
+                    imgListIndex(button);
+
+                    flp_black.Controls.Add(button);
+                };
+            }
         }
     }
 }
